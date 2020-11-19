@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link href="https://fonts.googleapis.com/css?family=Archivo:500|Open+Sans:300,700" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="./js/utils.js"></script>
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
+</head>
+
+<body>
+    <div id="screen_splash" class="screen">
+        <img src="assets/Splash_min.png" />
+        <div>
+            <button onclick="pregame()">Start</button>
+        </div>
+    </div>
+    <div id="screen_pregame" style="display: none" class="screen">
+        <form id="playerform">
+            <label for="players">Players:</label>
+            <input type="number" id="numplayers" name="players" step="1" value="2" style="width: 45px" max="5" min="2">
+
+            <!-- This template is copied depending on how many players there are. -->
+            <div class="player-unit" id="player_0" style="display: none">
+                <h4 class="player-label">Player %n</h4>
+                <label for="player-name-0">Name: </label>
+                <input class="player-name" type="text" name="name-0"><br>
+                <label for="color">Color</label>
+                <select class="player-color" name="color" >
+                    <option value="red">Red</option>
+                    <option value="blue">Blue</option>
+                    <option value="yellow">Yellow</option>
+                    <option value="pink">Pink</option>
+                    <option value="green">Green</option>
+                    <option value="Purple">Purple</option>
+                </select>
+            </div>
+            <button type="submit" id="player_form_submit">Start!</button>
+
+        </form>
+    </div>
+    <div id="screen_game" style="display: none" class="screen">
+        <div id="container_board" style="display: inline-block;">
+            <div id="overlay_replay" style="display: none">
+                <h1 id="endgame"></h1>
+                <div><button id="btn_replox">Play again</button></div>
+                <div id="wait_for_host">Waiting for host...</div>
+            </div>
+            <div id="overlay">
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="js/game.js"></script>
+</body>
+
+</html>
