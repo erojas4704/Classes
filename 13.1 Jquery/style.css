@@ -1,0 +1,23 @@
+#sort_options>label {
+    margin-right: 25px;
+}
+
+body {
+    margin: 5px;
+}
+
+.movie-listing {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    font-weight: bold;
+    width: 30%;
+}
+
+.movie-listing>div {
+    padding-left: 25px;
+}
+
+.movie-remove {
+    margin-left: auto;
+}
