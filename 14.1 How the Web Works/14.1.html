@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"
+        integrity="sha384-LtrjvnR4Twt/qOuYxE721u19sVFLVSA4hf/rRt6PrZTmiPltdZcI7q7PXQBYTKyf"
+        crossorigin="anonymous"></script>
+    <style>
+        article,
+        header {
+            padding-bottom: 3rem;
+        }
+    </style>
+    <meta charset="utf-8">
+    <title>14.1 - How the Web Works</title>
+    <script>$(".ass")</script>
+</head>
+
+<body>
+    <div class="container-fluid row">
+        <div class="col"></div>
+        <div class="col-12 col-s-10 col-md-8 col-lg-6 mt-3">
+            <header class="h3">14.1 - How the Web Works</header>
+            <article>
+                <div class="h4">What is HTTP?</div>
+                <section>HTTP is an acronym which stands for Hyper Text Transfer Protocol.</section>
+                <section>
+                    It is essentially an agreed upon set of standards and expectations for how web
+                    browsers and web servers should communicate with eachother.
+                </section>
+            </article>
+
+            <article>
+                <div class="h4">What is a URL?</div>
+                <section>
+                    URL is an acronym that stands for Uniform Resource Locator. It is a string
+                    that is sent to a network to make a request for a resource.
+                </section>
+                <section>
+                    It carries a protocol, a hostname or IP, a port (optionally), a directory, and potentially
+                    additional
+                    parameters in the form of a query string.
+                </section>
+                <section>
+                    This information is then parsed by servers which then send back the appropriate data.
+                </section>
+            </article>
+
+            <article>
+                <div class="h4">What is DNS?</div>
+                <section>
+                    DNS stands for Domain Name System. DNS are servers that work to resolve domain names to their IP
+                    addresses by comparing the names to their directories.
+                </section>
+            </article>
+
+            <article>
+                <div class="h4">What is a query string?
+                </div>
+                <section>
+                    A query string is a string at the end of an URL that carries name/value pairs. This string
+                    is used by web servers to determine what information they send to the browser.
+                </section>
+            </article>
+
+            <article>
+                <div class="h4">What are two HTTP verbs and how are they different?</div>
+                <section>
+                    The two HTTP verbs are HTTP, and HTTPS. The difference is that HTTPS is encrypted.
+                    HTTPS servers must have signed certificates to be trusted by browsers.
+                </section>
+            </article>
+
+            <article>
+                <div class="h4">What is an HTTP request?</div>
+                <section>
+                    An HTTP request is a request for a server resource made through an URL. Requests can be one of
+                    several
+                    types,
+                    mainly GET and POST. GET requests are merely for requesting data, while POST requests are more
+                    likely to
+                    have
+                    permanent changes on the server-side.
+                </section>
+            </article>
+
+            <article>
+                <div class="h4">What is an HTTP response?</div>
+                <section>
+                    An HTTP response is the response returned by the server after a request is made. Responses have a
+                    body
+                    which is what is interpreted by the web-browser to create a page.
+                </section>
+            </article>
+
+            <article>
+                <div class="h4">What is an HTTP header? Give a couple examples of request and response headers you have
+                    seen.</div>
+                <section>
+                    An HTTP header is meta-data attached to requests. HTTP headers have information such as cookies,
+                    language, mime-type, method,as well as many others.
+                </section>
+                <section>
+                    This determines how the server should parse the request.
+                </section>
+            </article>
+
+            <article>
+                <div class="h4">What are the processes that happen when you type <span
+                        class="text-primary">“http://somesite.com/some/page.html”</span> into a browser?</div>
+                <section>
+                    First the browser recognizes the http protocol and creates an http request for
+                    "somesite.com/some/page.html".
+                </section>
+                <section>
+                    Then, that request is routed to your ISP, which, using a Domain Name System, looks up "somesite.com"
+                    and
+                    finds
+                    its IP address.
+                </section>
+                <section>
+                    After, somesite.com interprets the GET request for "some/page.html" and responds with the
+                    appropriate
+                    data,
+                    sending
+                    back the page
+                    as a body in the request response.
+                </section>
+                <section>
+                    Your browser reads through the response, and line by line, requests
+                    every
+                    necessary resource within that page.
+                </section>
+            </article>
+            <h1>The Form</h1>
+            <form action="#" method="post">
+                <div class="form-group">
+                    <label for="txt_email">E-Mail Address</label>
+                    <input id="txt_email" type="email" class="form-control" placeholder="E-mail" name="email">
+                    <small class="form-text text-muted">Tell it to me RIGHT NOW.</small>
+                </div>
+                <div class="form-group">
+                    <label for="txt_ssn">Social Security Number</label>
+                    <input id="txt_ssn" type="text" class="form-control" name="ssn">
+                    <small class="form-text text-muted">For clerical purposes, of course.</small>
+                </div>
+                <div class="form-check">
+                    <input id="cb_soul" type="checkbox" class="form-check-input">
+                    <label for="cb_soul" class="form-check-label">Sell your soul?</label>
+                </div>
+                <small class="form-text text-muted">You don't really have a say in the matter.</small>
+                <button type="submit" class="btn btn-primary mt-3">Go.</button>
+            </form>
+        </div>
+        <div class="col"></div>
+    </div>
+</body>
+
+</html>
