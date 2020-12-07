@@ -19,7 +19,7 @@ const getGif = async term => {
         return;
     }
 
-    let response = await axios.get(`http://api.giphy.com/v1/gifs/search`, {
+    let response = await axios.get(`https://api.giphy.com/v1/gifs/search`, {
         params: {
             q: term,
             api_key: 'MhAodEJIJxQMxW9XqxKjyXfNYdLoOIym'
