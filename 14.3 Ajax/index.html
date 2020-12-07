@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>14.3 Ajax</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.0/axios.min.js"
+        integrity="sha512-DZqqY3PiOvTP9HkjIWgjO6ouCbq+dxqWoJZ/Q+zPYNHmlnI2dQnbJ5bxAHpAMw+LXRm4D72EIRXzvcHQtE8/VQ=="
+        crossorigin="anonymous"></script>
+    <style>
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body class=" bg-dark">
+    <div class="container-fluid h-100 justify-content-center">
+        <div class="jumbotron bg-dark">
+            <h1 class="row justify-content-center text-white">Giphy Party</h1>
+            <form class="row justify-content-center" id="the_form">
+                <input type="text" id="txt_search" name="term" placeholder="Search term">
+                <button type="submit" class="btn btn-primary">Search Giphy!</button>
+                <button type="button" id="btn_delete" class="btn btn-danger">Clear</button>
+            </form>
+        </div>
+        <div class="row justify-content-start pt-3" id="images">
+            <template id="template-image">
+                <div style="width: 25rem" class="card bg-secondary text-light image m-3">
+                    <img src="" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title img-title"></h5>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
