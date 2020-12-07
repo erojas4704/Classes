@@ -14,25 +14,27 @@ const onFormSubmit = e => {
 const deleteAll = e => $(".image").remove()
 
 const getGif = async term => {
-    if(term.length < 1){
+    if (term.length < 1) {
         alert("type something in, you dipstick");
         return;
     }
+    
+    try {
+        let response = await axios.get(`https://api.giphy.com/v1/gifs/search`, {
+            params: {
+                q: term,
+                api_key: 'MhAodEJIJxQMxW9XqxKjyXfNYdLoOIym'
+            }
+        })
 
-    let response = await axios.get(`https://api.giphy.com/v1/gifs/search`, {
-        params: {
-            q: term,
-            api_key: 'MhAodEJIJxQMxW9XqxKjyXfNYdLoOIym'
-        }
-    }).catch( err => {
+        let imgArray = response.data.data;
+        let randomIndex = (Math.random() * imgArray.length) | 0;
+        renderImage(response.data.data[randomIndex]);
+    } catch (err) {
         console.log(err);
         console.error("Could not retrieve the HILARIOUS THE LE MEME");
         alert("How did you @#$% this up?");
-    })
-
-    let imgArray = response.data.data;
-    let randomIndex = (Math.random() * imgArray.length) | 0;
-    renderImage(response.data.data[randomIndex]);
+    }
 }
 
 const renderImage = imageData => {
