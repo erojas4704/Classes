@@ -1,0 +1,28 @@
+/* some colors you may find useful:
+  #115ff4
+  #060ce9
+  #28a200
+  #8d2ab5
+  #74119c
+*/
+
+body{
+
+}
+
+table, th, td {
+  border: 1px solid black;
+  background-color: #115ff4;
+  color: white;
+  text-align: center;
+}
+
+th{
+  background-color:#060ce9
+}
+
+td{
+  width: 7rem;
+  height: 9rem;
+  font-size: 10pt;
+}
