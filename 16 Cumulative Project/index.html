@@ -14,19 +14,19 @@
 <body>
   <nav>
     <b><a class="nav-link navbar-brand" href="#" id="nav-all">Hack or Snooze</a></b>
-    <a class="nav-link nav-right" href="#" id="nav-login">login/create user</a>
-    
-    <small class="hidden" id="nav-user-menu"> | 
-      <a class="mx-2" id="um-submit" href="#">submit</a> | 
-      <a class="mx-2" id="um-favorites" href="#">favorites</a> | 
-      <a class="mx-2" id="um-stories" href="#">my stories</a>
+    <small class="hidden" id="nav-user-menu"> <span class="sep">|</span> 
+      <a id="um-submit" href="#">submit</a> <span class="sep">|</span>  
+      <a id="um-favorites" href="#">favorites</a> <span class="sep">|</span>  
+      <a id="um-stories" href="#">my stories</a>
     </small>
 
-    <span class="nav-link nav-right hidden" id="nav-welcome">
-      <a href="#" id="nav-user-profile"></a>
-    </span>
-
     <div id="user-panel" class="nav-right">
+      <a class="nav-link nav-right" href="#" id="nav-login">login/create user</a>
+
+      <a class="hidden" id="nav-profile" href="#">
+        <small></small>
+      </a>
+
       <a class="hidden" id="nav-logout" href="#">
         <small>(logout)</small>
       </a>

@@ -46,19 +46,35 @@ class StoryList {
   async addStory(user, newStory) {
     // this function should return the newly created story so it can be used in
     // the script.js file where it will be appended to the DOM
-    let story;
+    let response;
 
-    story = await axios.post(`https://hack-or-snooze-v3.herokuapp.com/stories`, {
+    response = await axios.post(`${BASE_URL}/stories`, {
       token: user.loginToken,
       story: newStory
-    }
-    )
+    })
       .catch(err => {
         window.alert("Error: Could not post story.");
         console.error(err);
       });
 
-    return story;
+    this.stories.push(response.data.story);
+    user.ownStories.push(response.data.story);
+    return response;
+  }
+
+  async deleteStory(user, story) {
+    let response = await axios.delete(`${BASE_URL}/stories/${story.storyId}`, {
+      data: {
+        token: user.loginToken
+      }
+    });
+
+    if(response.status === 200) {
+      //Remove our local version of the story as well as the user's
+      this.stories = this.stories.filter( rem => rem.storyId !== story.storyId);
+      user.ownStories = user.ownStories.filter( rem => rem.storyId !== story.storyId);
+    }
+    return response;
   }
 }
 
@@ -82,34 +98,38 @@ class User {
   }
 
   async favoriteStory(story) {
-    await axios.post(`${BASE_URL}/users/${this.username}/favorites/${story.storyId}`, {
-      token: this.loginToken
-    });
-
-
     if (!this.favorites.some(fav => fav.storyId === story.storyId)) {
       this.favorites.push(story);
     }
 
-    let response = this.updateFavorites();
-    console.log(response);
+    let response = await axios.post(`${BASE_URL}/users/${this.username}/favorites/${story.storyId}`, {
+      token: this.loginToken
+    });
+
+    let user = response.data.user;
+    this.favorites = user.favorites;
+
+    return response;
   }
 
   async unfavoriteStory(story) {
-    this.favorites.filter(fav => fav.storyId !== story.storyId);
+    this.favorites = this.favorites.filter(fav => fav.storyId !== story.storyId);
 
-    let response = this.updateFavorites();
-    console.log(response);
+    let response = await axios.delete(`${BASE_URL}/users/${this.username}/favorites/${story.storyId}`, {
+      data: {
+        token: this.loginToken
+      }
+    });
+
+    let user = response.data.user;
+    this.favorites = user.favorites;
+
+    return response;
   }
 
-  // async updateFavorites() {
-  //   return await axios.post(`${BASE_URL}/users/${this.username}`, {
-  //     token: this.loginToken,
-  //     user: {
-  //       favorites: this.favorites
-  //     }
-  //   });
-  // }
+  isAuthorOf(story){
+    return this.ownStories.some( ownStory => ownStory.storyId === story.storyId);
+  }
 
   /* Create and return a new user.
    *

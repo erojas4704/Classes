@@ -226,3 +226,16 @@ form > hr {
     margin: 8px auto;
   }
 }
+
+.story-delete{
+  color: red;
+}
+
+.warn{
+  color: red;
+}
+
+.sep{
+  margin-left: 7px;
+  margin-right: 7px;
+}

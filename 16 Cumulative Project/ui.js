@@ -9,8 +9,8 @@ $(async function () {
   const $navLogin = $("#nav-login");
   const $navLogOut = $("#nav-logout");
   const $navUserMenu = $("#nav-user-menu");
-  const $myArticles = $("#my-articles");
   const $favoritedArticles = $("#favorited-articles");
+  const $navProfile = $("#nav-profile");
 
   // global storyList variable
   let storyList = null;
@@ -33,11 +33,22 @@ $(async function () {
     const password = $("#login-password").val();
 
     // call the login static method to build a user instance
-    const userInstance = await User.login(username, password);
+    const userInstance = await User.login(username, password)
+      .catch(err => {
+        console.log(err);
+        if (err.response.status === 404 || err.response.status == 401) {
+          $("#form-response").remove();
+          $(`<h4 id="form-response" class="warn">Invalid username or password!</h4>`).insertBefore("#login-form hr");
+        }
+      });
+
     // set the global user to the user instance
-    currentUser = userInstance;
-    syncCurrentUserToLocalStorage();
-    loginAndSubmitForm();
+    if (userInstance) {
+      currentUser = userInstance;
+      syncCurrentUserToLocalStorage();
+      loginAndSubmitForm();
+      updateUserStats(userInstance);
+    }
   });
 
   /**
@@ -54,14 +65,26 @@ $(async function () {
     let password = $("#create-account-password").val();
 
     // call the create method, which calls the API and then builds a new user instance
-    const newUser = await User.create(username, password, name);
-    currentUser = newUser;
-    syncCurrentUserToLocalStorage();
-    loginAndSubmitForm();
+    const newUser = await User.create(username, password, name)
+      .catch(err => {
+        //409 Conflict
+        if (err.response.status === 409) {
+          $("#form-response").remove();
+          $createAccountForm.append($(`<h4 id="form-response" class="warn">Username taken.</h4>`));
+        }
+      });
+
+    if (newUser) {
+      currentUser = newUser;
+      syncCurrentUserToLocalStorage();
+      loginAndSubmitForm();
+      updateUserStats(newUser);
+    }
   });
 
-  $navUserMenu.on("click", e => {
-
+  $navProfile.on('click', e => {
+    hideElements();
+    $("#user-profile").show();
   });
 
   $("#um-submit").on("click", e => {
@@ -72,41 +95,69 @@ $(async function () {
 
   $("#um-stories").on("click", e => {
     hideElements();
-    $myArticles.show();
+    $ownStories.show();
+    generateMyStories();
+
   });
 
   $("#um-favorites").on("click", e => {
     hideElements();
     $favoritedArticles.show();
+    generateFavorites();
   });
 
+  /**Add a new story. */
   $submitForm.on("submit", async e => {
     e.preventDefault();
+
     let form = {};
     $("input", $submitForm).each((i, el) => {
       form[el.id] = el.value;
       el.value = "";
     });
 
+    form.username = currentUser.username;
+
     let response = await storyList.addStory(currentUser, new Story(form));
-    let newStory = response.data.story  ;
-    if(newStory == undefined) return;
+    let newStory = response.data.story;
+    if (newStory == undefined) return;
 
     $allStoriesList.prepend(generateStoryHTML(newStory));
   })
 
-  $(".story-entry").on("click", ".story-fav", e => {
+  /**Add a story to favorites */
+  $(".articles-container").on("click", ".story-fav", e => {
     let $entry = $(e.target).parents(".story-entry");
 
     //Favorite story
     let isFavorite = $entry.attr("data-favorite") === "true";
     let story = storyList.getStoryById($entry.attr('id'));
 
-    console.log(story);
+    console.log("clickity clicky clicky bong ");
 
-    if(!isFavorite) currentUser.favoriteStory(story)
-    else currentUser.unfavoriteStory(story);
-    
+    if (!isFavorite) {
+      $entry.attr("data-favorite", "true");
+      currentUser.favoriteStory(story);
+    }
+    else {
+      $entry.attr("data-favorite", "false");
+      currentUser.unfavoriteStory(story)
+    };
+
+    $entry.replaceWith(generateStoryHTML(story));
+
+  });
+
+  /**
+   * Delete a story.
+   */
+  $(".articles-container").on("click", ".story-delete", async e => {
+    let $entry = $(e.target).parents(".story-entry");
+    let story = storyList.getStoryById($entry.attr('id'));
+
+
+    let response = await storyList.deleteStory(currentUser, story);
+    if (response.status === 200) $entry.remove();
   });
 
   /**
@@ -159,6 +210,7 @@ $(async function () {
 
     if (currentUser) {
       showNavForLoggedInUser();
+      updateUserStats(currentUser);
     }
   }
 
@@ -182,6 +234,15 @@ $(async function () {
     showNavForLoggedInUser();
   }
 
+  function updateUserStats(user){
+    if(user === undefined) return;
+
+    $("#nav-profile small").text(user.username);
+    $("#profile-name").text(`Name: ${user.name}`);
+    $("#profile-username").text(`Username: ${user.username}`);
+    $("#profile-account-date").text(`Account Created: ${formatDate(user.createdAt)}`);
+  }
+
   /**
    * A rendering function to call the StoryList.getStories static method,
    *  which will generate a storyListInstance. Then render it.
@@ -202,6 +263,35 @@ $(async function () {
     }
   }
 
+  async function generateFavorites() {
+    storyList = await StoryList.getStories();
+
+    $favoritedArticles.empty();
+    if (currentUser.favorites.length < 1) {
+      $favoritedArticles.append($("<h3>There seems to be nothing here.</h3>"));
+      return;
+    }
+    for (let story of currentUser.favorites) {
+      const result = generateStoryHTML(story);
+      $favoritedArticles.append(result);
+    }
+  }
+
+  async function generateMyStories() {
+    storyList = await StoryList.getStories();
+
+    $ownStories.empty();
+    if (currentUser.ownStories.length < 1) {
+      $ownStories.append($("<h3>There seems to be nothing here.</h3>"));
+      return;
+    }
+
+    for (let story of currentUser.ownStories) {
+      const result = generateStoryHTML(story);
+      $ownStories.append(result);
+    }
+  }
+
   /**
    * A function to render HTML for an individual Story instance
    */
@@ -210,8 +300,9 @@ $(async function () {
     let hostName = getHostName(story.url);
     let isFavorite = false;
 
-    if(currentUser) isFavorite = currentUser.favorites.some( fav => fav.storyId === story.storyId);
+    let showOptions = currentUser?.isAuthorOf(story);
 
+    if (currentUser) isFavorite = currentUser.favorites.some(fav => fav.storyId === story.storyId);
 
     // render story markup
     const storyMarkup = $(`
@@ -224,7 +315,7 @@ $(async function () {
         </a>
         <small class="article-author">by ${story.author}</small>
         <small class="article-hostname ${hostName}">(${hostName})</small>
-        <small class="article-username">posted by ${story.username}</small>
+        <small class="article-username">posted by ${story.username} ${showOptions ? `<a class="story-delete" style="margin-left: 24px">Delete</a>` : ""}</small>
       </li>
     `);
 
@@ -238,10 +329,9 @@ $(async function () {
       $submitForm,
       $allStoriesList,
       $filteredArticles,
-      $ownStories,
       $loginForm,
       $createAccountForm,
-      $myArticles,
+      $ownStories,
       $favoritedArticles
     ];
     elementsArr.forEach($elem => $elem.hide());
@@ -250,6 +340,7 @@ $(async function () {
   function showNavForLoggedInUser() {
     $navLogin.hide();
     $navLogOut.show();
+    $navProfile.show();
     $navUserMenu.show();
   }
 
@@ -277,3 +368,8 @@ $(async function () {
     }
   }
 });
+
+function formatDate (dateString){
+  const options = { year: "numeric", month: "long", day: "numeric" }
+  return new Date(dateString).toLocaleDateString(undefined, options)
+}
