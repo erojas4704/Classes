@@ -48,6 +48,7 @@ $(async function () {
       syncCurrentUserToLocalStorage();
       loginAndSubmitForm();
       updateUserStats(userInstance);
+      updateEntries();
     }
   });
 
@@ -79,6 +80,7 @@ $(async function () {
       syncCurrentUserToLocalStorage();
       loginAndSubmitForm();
       updateUserStats(newUser);
+      updateEntries();
     }
   });
 
@@ -234,8 +236,8 @@ $(async function () {
     showNavForLoggedInUser();
   }
 
-  function updateUserStats(user){
-    if(user === undefined) return;
+  function updateUserStats(user) {
+    if (user === undefined) return;
 
     $("#nav-profile small").text(user.username);
     $("#profile-name").text(`Name: ${user.name}`);
@@ -300,14 +302,16 @@ $(async function () {
     let hostName = getHostName(story.url);
     let isFavorite = false;
 
+    //Slightly alter the content based on whether or not i'm logged in.
     let showOptions = currentUser?.isAuthorOf(story);
+    let showUserView = currentUser != undefined;
 
-    if (currentUser) isFavorite = currentUser.favorites.some(fav => fav.storyId === story.storyId);
+    if (currentUser) isFavorite = currentUser?.favorites.some(fav => fav.storyId === story.storyId);
 
     // render story markup
     const storyMarkup = $(`
       <li id="${story.storyId}" class="story-entry" data-favorite="${isFavorite}">
-        <small class="story-fav">
+        <small class="story-fav" ${showUserView ? "" : `style="display: none"`}>
           ${isFavorite ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>'}
         </small>
         <a class="article-link" href="${story.url}" target="a_blank">
@@ -367,9 +371,17 @@ $(async function () {
       localStorage.setItem("username", currentUser.username);
     }
   }
-});
+  
+  function formatDate(dateString) {
+    const options = { year: "numeric", month: "long", day: "numeric" }
+    return new Date(dateString).toLocaleDateString(undefined, options)
+  }
 
-function formatDate (dateString){
-  const options = { year: "numeric", month: "long", day: "numeric" }
-  return new Date(dateString).toLocaleDateString(undefined, options)
-}
+  function updateEntries() {
+    $(".story-entry").each((i, el) => {
+      $el = $(el);
+      let story = storyList.getStoryById($el.attr('id'));
+      $el.replaceWith(generateStoryHTML(story));
+    })
+  }
+});

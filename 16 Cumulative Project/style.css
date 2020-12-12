@@ -239,3 +239,7 @@ form > hr {
   margin-left: 7px;
   margin-right: 7px;
 }
+
+.story-fav:hover{
+  color: blue;
+}
