@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Memory Game!</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Memory Game!</h1>
+    
+    <div id="splash">
+      <button onclick="startGame()">Start!</button>
+    </div>
+    <div id="game-over" style="display: none">
+      <h1 id="win-contigent">A winner is you.</h1>
+      <h1 id="message-win"></h1>
+      <button onclick="startGame()">Play Again</button>
+    </div>
+    <div id="screen-game" style='display: none'>
+        <h1>Attempts: <span id="score">0</span></h1>
+        <h1 id="container-best">Best: <span id="best">0</span></h1>
+        <div id="game" >
+        </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

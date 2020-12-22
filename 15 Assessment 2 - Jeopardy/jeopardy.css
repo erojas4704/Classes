@@ -6,8 +6,9 @@
   #74119c
 */
 
-body{
-
+html, body {
+  margin: 0;
+  height: 100%;
 }
 
 table, th, td {
@@ -17,12 +18,21 @@ table, th, td {
   text-align: center;
 }
 
-th{
-  background-color:#060ce9
+th {
+  background-color: #060ce9
 }
 
-td{
+td {
   width: 7rem;
   height: 9rem;
   font-size: 10pt;
+}
+
+.hidden{
+  display: none;
+}
+
+.full-center{
+  position: absolute;
+  transform: translate(50%, 50%);
 }

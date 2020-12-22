@@ -1,0 +1,33 @@
+mkdir first
+cd first
+touch person.txt
+mv person.txt another.txt
+cp another.txt copy.txt
+rm copy.txt
+cd ..
+cp -r first second
+rm -r -d second
+
+1. man command is supposed to provide a manual for the function. mine doesn't work.
+
+2. ls lists the current directory content. -l lists all files in long format. -a lists hidden files and folders.
+
+3. Ctrl left and right to jump words
+
+4. CTRL E to jump to end of line
+
+5. CTRL A to move to beginning
+
+6. Ctrl W to delete a word.
+
+7. A terminal is the program that provides the command line. a shell is a program running within the command line which actually processes command.
+
+8. An absolute path is a complete path from the root directory.
+
+9. A relative path is a path relative from the current path.
+
+10. A flag modifies a command. For example, -a for ls, which lists all files and folders, even those that are hidden. Or -r for cp, which makes the copy recursive. Or finally, -d for directory, which modifies the rm command to remove even directories.
+
+11. The -r flag makes the rm command recursive, and the -f flag makes it force remove all files with no prompt.
+
+
