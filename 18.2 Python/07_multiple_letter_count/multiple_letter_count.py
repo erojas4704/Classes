@@ -7,3 +7,9 @@ def multiple_letter_count(phrase):
         >>> multiple_letter_count('Yay')
         {'Y': 1, 'a': 1, 'y': 1}
     """
+    dic = {}
+    for char in phrase:
+        if char in dic: dic[char] += 1
+        else: dic[char] = 1
+
+    return dic
