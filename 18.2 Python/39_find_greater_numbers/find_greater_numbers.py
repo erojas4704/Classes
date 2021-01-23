@@ -19,3 +19,10 @@ def find_greater_numbers(nums):
         >>> find_greater_numbers([])
         0
     """
+    o = 0
+    for i, n in enumerate(nums):
+        for n2 in nums[i:]:
+            if n < n2: 
+                o += 1
+    
+    return o

@@ -28,4 +28,15 @@ def is_odd_string(word):
         True
     """
 
+    #length = len(word)
+    #positions = ((length ** 2) + length)/2
+
+    positions = 0
+
+    for char in word.upper():
+        positions += ord(char) - 64
+
+    print(positions)
+
+    return positions % 2 != 0
     # Hint: you may find the ord() function useful here

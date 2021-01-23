@@ -9,24 +9,31 @@ def includes(collection, sought, start=None):
     index. This `start` is ignored for sets/dictionaries, since they aren't
     ordered.
 
-        >>> includes([1, 2, 3], 1)
+        >>> print(includes([1, 2, 3], 1))
         True
 
-        >>> includes([1, 2, 3], 1, 2)
+        >>> print(includes([1, 2, 3], 1, 2))
         False
 
-        >>> includes("hello", "o")
+        >>> print(includes("hello", "o"))
         True
 
-        >>> includes(('Elmo', 5, 'red'), 'red', 1)
+        >>> print(includes(('Elmo', 5, 'red'), 'red', 1))
         True
 
-        >>> includes({1, 2, 3}, 1)
+        >>> print(includes({1, 2, 3}, 1))
         True
 
-        >>> includes({1, 2, 3}, 1, 3)  # "start" ignored for sets!
+        >>> print(includes({1, 2, 3}, 1, 3))  # "start" ignored for sets!
         True
 
-        >>> includes({"apple": "red", "berry": "blue"}, "blue")
+        >>> print(includes({"apple": "red", "berry": "blue"}, "blue"))
         True
     """
+    if isinstance(collection, set):
+        return sought in collection
+
+    if isinstance(collection, dict):
+        return sought in collection.keys() or sought in collection.values()
+
+    return sought in list(collection)[start if start else 0:]
