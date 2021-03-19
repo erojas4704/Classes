@@ -1,0 +1,16 @@
+{% extends 'base.jinja' %}
+
+{% block title %}Start{% endblock %}
+
+{% block body %}
+<h1>Madlibs</h1>
+<form id="form_madlibs" action="/madlib/{{story.name}}">
+    {% for prompt in story.prompts %}
+    <p>
+        <label for="{{prompt}}">{{prompt}}</label>
+        <input id="{{prompt}}" name="{{prompt}}">
+    </p>
+    {% endfor %}
+    <button type="Submit">Time for fun!</button>
+</form>
+{% endblock %}

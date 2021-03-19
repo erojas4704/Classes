@@ -1,0 +1,11 @@
+{% extends 'base.jinja' %}
+
+{% block title %}Madlibs{% endblock %}
+
+{% block body %}
+{% for story in stories %}
+<p>
+    <a href="start/{{story.name}}">{{story.name}}</a>
+</p>
+{% endfor %}
+{% endblock %}
