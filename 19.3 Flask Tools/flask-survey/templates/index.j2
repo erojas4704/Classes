@@ -1,0 +1,20 @@
+{% extends "base.j2" %}
+{% block title %} Index {%endblock%}
+
+{% block body %}
+Home page les go mang
+<div class="container-fluid">
+    {% for survey in surveys %}
+        <div>
+            <h1>{{survey.title}}</h1>
+            <div>{{survey.instructions}}</div>
+            <button class="btn btn-success" href="./survey/{{survey.title}}">Do it</div>
+            <button class="btn btn-primary">I'm scared</div>
+        </div>
+    {% endfor%}
+</div>
+
+{%endblock%}
+
+{%block scripts %} 
+{%endblock%}
