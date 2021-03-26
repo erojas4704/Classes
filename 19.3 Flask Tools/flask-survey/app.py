@@ -11,16 +11,21 @@ responses = []
 
 @app.route('/')
 def index():
-    buffer = []
-    for survey in surveys.items():
-        buffer.append( (survey.title, survey.instructions) )
+    surveyNames = []
 
-    return render_template("index.j2", surveys=buffer)
+    for survey in surveys.values():
+        surveyNames.append(survey.title)
+        
+    return render_template("index.j2", surveys=surveys.values())
 
     
-@app.route('/survey/<survey>')
-def survey(survey_name):
-    survey = surveys[survey_name]
+@app.route('/survey/<survey_title>')
+def survey(survey_title):
+    print(f"TItle of survey is {survey_title}")
+    survey = [survey for survey in surveys.values() if survey.title == survey_title][0]
+    print(survey.title)
+    print(f"Got survey {survey}")
+
     return render_template("survey.j2", survey=survey)
     
 
