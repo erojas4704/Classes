@@ -1,3 +1,4 @@
 .vscode/
 venv/
 19.1 Flask/venv
+**/venv
