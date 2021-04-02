@@ -1,0 +1,26 @@
+{% extends "base.j2" %}
+{% block title %}Question{%endblock%}
+
+
+{% block body %}
+    <div class="container-fluid m2">
+        <form id="form-question" action="/answer" method="post">
+            <input type="hidden" name="survey_title" value="{{title}}">
+            <div class="question-group pb-2">
+                <div class="question">{{question.question}}</div>
+                {% for choice in question.choices %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="answer" id="{{choice}}" value="{{choice}}">
+                        <label class="form-check-label" for="{{choice}}">{{choice}}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        <button class="btn btn-primary" type="submit" >Done</button>
+        </form>
+        
+    </div>
+{% endblock%}
+
+
+{%block scripts %}
+{%endblock%}

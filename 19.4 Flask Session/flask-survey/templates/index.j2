@@ -1,0 +1,21 @@
+{% extends "base.j2" %}
+{% block title %} Index {%endblock%}
+
+{% block body %}
+<div class="container-fluid"> 
+    {% for survey in surveys %}
+        <div class="col survey my-4">
+            <h1>{{survey.title}}</h1>
+            <div>{{survey.instructions}}</div>
+            <div class="row">
+                <a class="btn btn-success mx-1" href="./survey/{{survey.title}}">Do it</a>
+                <a class="btn btn-primary mx-1" href="http://google.com">I'm scared</a>
+            </div>
+        </div>
+    {% endfor%}
+</div>
+
+{%endblock%}
+
+{%block scripts %} 
+{%endblock%}
