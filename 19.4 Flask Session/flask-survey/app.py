@@ -1,19 +1,17 @@
 from logging import error
-from flask import Flask, request, render_template, redirect, flash
+from flask import Flask, request, render_template, redirect, flash, session
 from surveys import *
-from pprint import pprint
 
 print("running")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "sekeret"
 
-
-responses = []
-
 @app.route('/')
 def index():
     surveyNames = []
+
+    session['responses'] = []
 
     for survey in surveys.values():
         surveyNames.append(survey.title)
@@ -30,40 +28,51 @@ def survey(survey_title):
 @app.route('/survey/<survey_title>/questions/<index>')
 def question(survey_title, index):
     survey = getSurveyByTitle(survey_title)
+
+    responses = session['responses']
+    numResponses = len(responses)
     
-    if(int(index) > len(responses)):
+    if(int(index) > numResponses):
         flash("Nice try wise guy")
-        return redirect(f'/survey/{survey_title}/questions/{len(responses)}')
+        print(f'Index {index} / {numResponses}')
+        numResponses = len(session['responses'])
+        return redirect(f'/survey/{survey_title}/questions/{ numResponses }')
 
         
     question = survey.questions[int(index)]
 
-    print(question)
     return render_template("question.j2", question = question, title=survey_title)
     
 
 @app.route('/answer', methods=['POST'])
 def answer():
+    title = request.form['survey_title']
+    responses = session['responses']
+    numResponses = len(responses)
+
     try:
-        title = request.form['survey_title']
         answer = request.form['answer']
     except BaseException:
-        flash("You gotta actually put an answer")
-        return redirect(f'/survey/{title}/questions/{len(responses)}')
+        flash("You gotta actually put an answer dude")
+        return redirect(f'/survey/{title}/questions/{numResponses}')
 
     responses.append(answer)
+    session['responses'] = responses
+    numResponses = len(responses)
     
     survey = getSurveyByTitle(title)
 
-    if(len(responses) >= len(survey.questions)):
-        return redirect('/{title}/done')
+    if(len(session['responses']) >= len(survey.questions)):
+        request.form['survey_title']
+        return redirect(f'/survey/{title}/done')
 
-    return redirect(f'/survey/{title}/questions/{len(responses)}')
+    numResponses = len(session['responses'])
+    return redirect(f'/survey/{title}/questions/{numResponses}')
 
-@app.route('<survey_title>/done')
+@app.route('/survey/<survey_title>/done')
 def done(survey_title):
     survey = getSurveyByTitle(survey_title)
-    return render_template('done.j2', responses, survey)
+    return render_template('done.j2', survey=survey)
 
 
 def getSurveyByTitle(title):
