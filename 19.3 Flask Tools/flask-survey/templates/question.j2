@@ -4,17 +4,18 @@
 
 {% block body %}
     <div class="container-fluid m2">
-        <form id="form-question">
+        <form id="form-question" action="/answer" method="post">
+            <input type="hidden" name="survey_title" value="{{title}}">
             <div class="question-group pb-2">
                 <div class="question">{{question.question}}</div>
                 {% for choice in question.choices %}
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="{{question.question}}" id="{{choice}}">
-                        <label class="form-check-label" for="{{choice}}"  value="{{choice}}">{{choice}}</label>
+                        <input class="form-check-input" type="radio" name="answer" id="{{choice}}" value="{{choice}}">
+                        <label class="form-check-label" for="{{choice}}">{{choice}}</label>
                     </div>
                 {% endfor %}
             </div>
-        <button class="btn btn-primary" type="submit" action="answer" method="post">Done</button>
+        <button class="btn btn-primary" type="submit" >Done</button>
         </form>
         
     </div>

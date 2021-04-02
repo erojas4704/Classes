@@ -1,5 +1,7 @@
-from flask import Flask, request, render_template, redirect
+from logging import error
+from flask import Flask, request, render_template, redirect, flash
 from surveys import *
+from pprint import pprint
 
 print("running")
 
@@ -27,13 +29,47 @@ def survey(survey_title):
     
 @app.route('/survey/<survey_title>/questions/<index>')
 def question(survey_title, index):
-    print('do or die')
-    survey = [survey for survey in surveys.values() if survey.title == survey_title][0]
-    print(survey)
+    survey = getSurveyByTitle(survey_title)
+    
+    if(int(index) > len(responses)):
+        flash("Nice try wise guy")
+        return redirect(f'/survey/{survey_title}/questions/{len(responses)}')
+
+        
     question = survey.questions[int(index)]
 
     print(question)
-    return render_template("question.j2", question = question)
+    return render_template("question.j2", question = question, title=survey_title)
+    
+
+@app.route('/answer', methods=['POST'])
+def answer():
+    try:
+        title = request.form['survey_title']
+        answer = request.form['answer']
+    except BaseException:
+        flash("You gotta actually put an answer")
+        return redirect(f'/survey/{title}/questions/{len(responses)}')
+
+    responses.append(answer)
+    
+    survey = getSurveyByTitle(title)
+
+    if(len(responses) >= len(survey.questions)):
+        return redirect('/{title}/done')
+
+    return redirect(f'/survey/{title}/questions/{len(responses)}')
+
+@app.route('<survey_title>/done')
+def done(survey_title):
+    survey = getSurveyByTitle(survey_title)
+    return render_template('done.j2', responses, survey)
+
+
+def getSurveyByTitle(title):
+    survey = [survey for survey in surveys.values() if survey.title == title][0]
+    return survey
+
 
 #@app.route('/survey/<survey_title>')
 #def survey(survey_title):
