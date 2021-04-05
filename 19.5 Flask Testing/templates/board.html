@@ -1,11 +1,38 @@
 {% extends "base.html" %}
-{% block title %}Game{%endblock%} 
+{% block title %}Game{%endblock%}
 {% block body %}
-    <table class="table">
-        <thead>
-        </thead>
-        {% for rows in board.rows %}
-        
-        {% endfor %}
-    </table>
-{%endblock%} 
+
+<div class="row">
+
+    <div class="col-sm-3"></div>
+
+    <div class="col-sm-6 px-5">
+        <div class="h1">Boggle</div>
+        <table class="table">
+            <thead>
+            </thead>
+            <tbody>
+                {% for rows in board %}
+                <tr>
+                    {% for letter in rows %}
+                    <td>{{letter}}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <form id="form_guess">
+            <label for="txt_guess">Guess:</label>
+            <input type="text" class="form-control" id="txt_guess">
+            <button type="submit" class="btn btn-success">Guess</button>
+        </form>
+
+        <div id="score">Score: 0</div>
+        <div id="readout"></div>
+    </div>
+
+    <div class="col-sm-3"></div>
+    <script type="module" src="static/js/game.js"></script>
+</div>
+{%endblock%}
