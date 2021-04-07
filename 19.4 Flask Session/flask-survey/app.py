@@ -2,7 +2,6 @@ from logging import error
 from flask import Flask, request, render_template, redirect, flash, session
 from surveys import *
 
-print("running")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "sekeret"

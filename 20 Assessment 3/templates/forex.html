@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Forex{% endblock %}
+
+{% block body %}
+<div class="row m-3">
+    <div class="col-2">
+        <form action="/rate" method="get">
+            <div class="form-group">
+                <label for="i_from">Converting From:</label>
+                <input placeholder="EUR" class="form-control" type="text" name="from" id="i_from">
+            </div>
+            <div class="form-group">
+                <label for="i_to">Converting To:</label>
+                <input placeholder="USD" class="form-control" type="text" name="to" id="i_to">
+            </div>
+            <div class="form-group">
+                <label for="i_amount">Amount:</label>
+                <input class="form-control" type="number" name="amount" id="i_amount">
+            </div>
+            <button class="btn btn-primary" type="submit">Convert</button>
+        </form>
+        {% if result is defined %}
+        <div class="my-4">
+            <div>Converting {{token_from}} {{amount}} to {{token}},</div>
+            <div>The result is {{token}}{{result}}.</div>
+        </div>
+        {%endif%}
+    </div>
+</div>
+{% endblock %}
