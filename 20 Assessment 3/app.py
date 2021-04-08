@@ -16,7 +16,7 @@ def index():
 @app.route('/rate')
 def rate():
 
-    if not is_form_valid(request.form):
+    if not is_form_valid(request.args):
         flash("Make sure all fields are filled")
         return redirect("/")
 
@@ -24,29 +24,39 @@ def rate():
     currency_to = request.args.get('to')
     amount = float(request.args.get('amount'))
 
-
     codes = CurrencyCodes()
-
-    try:
-        result = runConversion(currency_from, currency_to, amount)
-
-        token = codes.get_symbol(currency_to)
-        token_from = codes.get_symbol(currency_from)
-
-        return render_template("/result.html", token=token, result=result, token_from=token_from, amount=amount)
-    except:
-        if codes.get_symbol(currency_from) is None:
-            flash(f'Currency "{currency_from}" is invalid')
-        if codes.get_symbol(currency_to) is None:
-            flash(f'Currency "{currency_to}" is invalid')
+    
+    
+    if not is_code_valid(currency_from) or not is_code_valid(currency_to):
+        flash_invalid_currencies(currency_from, currency_to)
         return redirect("/")
 
+        print("party over here")
+
+    result = run_conversion(currency_from, currency_to, amount)
+    token = codes.get_symbol(currency_to)
+    token_from = codes.get_symbol(currency_from)
+
+    return render_template("/result.html", token=token, result=result, token_from=token_from, amount=amount)
+
+def is_code_valid(currency_code):
+    codes = CurrencyCodes()
+    return not codes.get_symbol(currency_code) is None
+
+def flash_invalid_currencies(currency_from, currency_to):
+    codes = CurrencyCodes()
+    if codes.get_symbol(currency_from) is None:
+        flash(f'Currency "{currency_from}" is invalid')
+    if codes.get_symbol(currency_to) is None:
+        flash(f'Currency "{currency_to}" is invalid')
+
 def is_form_valid(form):
+    '''Makes sure every field in the form has a value. Returns False if it doesn't'''
     for key in form.keys():
-        if len(key) == 0:
+        if form[key] == None or len(form[key].strip()) == 0:
             return False
     return True
 
-def runConversion(currency_from, currency_to, amount):
+def run_conversion(currency_from, currency_to, amount):
     rates = CurrencyRates()
     return rates.get_rate(currency_from, currency_to) * amount
