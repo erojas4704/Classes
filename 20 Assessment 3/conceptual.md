@@ -34,15 +34,15 @@ Answer the following questions below:
 
 - What is a unit test?  
 
-An unit test is a function that tests a particular piece of code to make sure it does what it's supposed to be doing.
+  An unit test is a function that tests a particular piece of code to make sure it does what it's supposed to be doing.
 
 - What is an integration test?  
 
-An integration test is a program that tests many pieces of code that work together to make sure they are behaving as expected.
+  An integration test is a program that tests many pieces of code that work together to make sure they are behaving as expected.
 
 - What is the role of web application framework, like Flask?
 
-Web application frameworks like Flask are designed to facilitate building and deployment of web services using a standard that's up-to-date and secure without bogging down the developer with the minutiae. 
+  Web application frameworks like Flask are designed to facilitate building and deployment of web services using a standard that's up-to-date and secure without bogging down the developer with the minutiae. 
 
 - You can pass information to Flask either as a parameter in a route URL
   (like '/foods/pretzel') or using a URL query param (like
