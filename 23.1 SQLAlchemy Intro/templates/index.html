@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Index{% endblock %}
+
+{%block body %}
+    <div class="container-fluid m-2">
+        <div>
+            {% for user in users%}
+                <a class="row" href="/profile/{{user.id}}">  <span></span>{{user.first_name}} {{user.last_name}} </a>
+            {% endfor %}
+        </div>
+        <a class="row h4" href="/new_user">Create User</a>
+    </div>
+{% endblock %}

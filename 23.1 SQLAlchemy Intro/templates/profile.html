@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{user.first_name}} {{user.last_name}}{% endblock %}
+
+{%block body %}
+<div class="m-2">
+    <div class="container row justify-content-start pb-2">
+        <div class="pr-2"><img class="userthumb" src="{{user.image_url}}"/></div>
+        <div class="col">
+            <div class="h3 my-0">{{user.first_name}} {{user.last_name}}</div>
+            <small>Best Guy Ever</small>
+            
+        </div>
+    </div>
+    <div class="container row">
+        <a class="btn mx-1 btn-primary" role="button" href="/edit_user/{{user.id}}">Edit</a>
+        <form method="post" action="/delete_user/{{user.id}}">
+            <button class="btn mx-1 btn-danger" role="button" type="submit">Delete</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
