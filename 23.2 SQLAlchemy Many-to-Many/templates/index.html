@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Index{% endblock %}
+
+{%block body %}
+    <div class="col">
+
+            <div class="mb-3">
+            <div class="h3">Users</div>
+            {% for user in users%}
+            <div>
+                <a href="/profile/{{user.id}}">  <span></span>{{user.first_name}} {{user.last_name}} </a>
+            </div>
+            {% endfor %}
+            <a class="h4" href="/new_user">Create User</a>
+        </div>
+        
+        <div class="h3">Tags</div>
+        <div>
+        {% for tag in tags %}
+        <a class="badge badge-success" href="/tags/view/{{tag.id}}"> {{tag.tag_name}}</a>
+        {% endfor %}
+        </div>
+        
+        <a class="h4" href="/tags/create">Create Tag</a>
+    </div>
+{% endblock %}

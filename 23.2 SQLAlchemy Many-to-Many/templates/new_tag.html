@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Index{% endblock %}
+
+{%block body %}
+    <form class="" action="/tags/new/" method="post">
+        <h3 class="pb-2">
+            {% if tag %}
+            Editing tag {{tag.tag_name}}
+            {% else %}
+            Create a New tag
+            {% endif %}
+        </h3>
+            {% if tag %}
+                <input type="hidden" name="id" value="{{tag.id}}">
+            {% endif %}
+
+        <div class="form-group">  
+            <label for="tag_name">Tag</label>
+            <input type="text" name="tag_name" class="form-control" id="tag_name" placeholder="Tag Name"
+            {% if tag %}value="{{tag.tag_name}}"{% endif %}>
+        </div>
+        <a class="btn btn-outline-primary" href="/">Cancel</a>
+        <button type="submit" class="btn btn-primary"> {% if tag %} Update {% else %} Create {% endif %}</button>
+    </form>
+{% endblock %}

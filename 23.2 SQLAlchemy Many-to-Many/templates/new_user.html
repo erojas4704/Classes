@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Index{% endblock %}
+
+{%block body %}
+    <form class="mx-4" action="/make_user" method="post">
+        <h3 class="pb-2">{{prompt}}</h3>
+            {% if user %}
+            <input type="hidden" name="id" value="{{user.id}}">
+            {% endif %}
+            <div class="form-group">  
+                <label for="first_name">First Name</label>
+                <input type="text" name="first_name" class="form-control" id="first_name" placeholder="First Name" 
+                {% if user %}value="{{user.first_name}}"{% endif %}>
+            </div>
+            <div class="form-group">  
+                <label for="last_name">Last Name</label>
+                <input type="text" name="last_name" class="form-control" id="last_name" placeholder="Last Name"
+                {% if user %}value="{{user.last_name}}"{% endif %}>
+            </div>
+            <div class="form-group">  
+                <label for="image_url">Image URL</label>
+                <input type="text" name="image_url" class="form-control" id="image_url" placeholder="http://"
+                {% if user %}value="{{user.image_url}}"{% endif %}>
+            </div>
+            
+        <a class="btn btn-outline-primary" href="/">Cancel</a>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endblock %}

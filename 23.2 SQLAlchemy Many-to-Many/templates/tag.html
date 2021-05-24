@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Tag View{% endblock %}
+
+{%block body %}
+<div class="m-2">
+    <div class="display-4 text-primary pb-3">{{tag.tag_name}}</div>
+    
+    <div class="mt-2">
+        <a class="btn btn-outline-primary" href="/">Back</a>
+        <a class="btn btn-primary" href="/tags/edit/{{tag.id}}">Edit</a>
+        <form class="d-inline" action="/tags/delete/{{tag.id}}" method="post">
+            <button type="submit" class="btn btn-danger">Delete</a>
+        </form>
+    </div>
+
+
+    {% if tag.posts %}
+        <div class="py-2">
+
+            {% for post in tag.posts %}
+            <div>{{post.title}} by {{post.user.first_name}} {{post.user.last_name}}</div>
+            <div>{{post.body}}</div>
+            {% endfor %}
+        </div>
+    {%endif%}
+</div>
+
+{% endblock %}
