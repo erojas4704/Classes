@@ -113,8 +113,8 @@ def delete_post(post_id):
     flash("BALETED")
     return redirect(f"/profile/{author_id}")
 
-tulio = User(first_name="Tulio", last_name="Elputo", image_url="https://media.tits-guru.com/images/cf44c0e2-7de1-45c6-b704-d88df2c0dea8.jpeg")
-kenton = User(first_name="Kenton", last_name="London", image_url="https://thumb-lvlt.xhcdn.com/a/DoFcFfXkrug9KIwmm_TmZA/017/632/501/amp.10.jpg")
+tulio = User(first_name="Tulio", last_name="Elputo", image_url="")
+kenton = User(first_name="Kenton", last_name="London", image_url="")
 db.session.add(tulio)
 db.session.add(kenton)
 db.session.add(Post(title="Hey Guys", body="Hello! This seems like a really cool community and I'm new to the whole thing I just wanted to pop in and say hello. ", author_id=2))

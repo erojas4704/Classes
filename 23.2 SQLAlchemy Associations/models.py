@@ -27,4 +27,6 @@ class Post(db.Model):
     body = db.Column(db.String(240), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default = date.today())
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    user = db.relationship('Author', backref="users")
     

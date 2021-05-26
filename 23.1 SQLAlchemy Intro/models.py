@@ -18,3 +18,11 @@ class User(db.Model):
 
     image_url = db.Column(db.String(), nullable=True)
 
+class Post(db.Model):
+    __tablename__ = "posts"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String(80), nullable=False)
+    body = db.Column(db.String(240), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    

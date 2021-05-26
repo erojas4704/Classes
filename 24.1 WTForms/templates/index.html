@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}PET ADOPTION AGENCY!!!!!!!!!!!!!!!!!!!{% endblock %}
+
+{%block body %}
+    <div class="col">
+
+            <div class="mb-3">
+            <div class="h3">Pets</div>
+            <a class="h4 btn btn-success" href="/pets/new">Create Friend</a>
+            <div class="row justify-content-center">
+                {% for pet in pets%}
+                <div class="card col-xl-2 col-lg-3 col-md-4 col-sm-7 m-4 pt-2">
+                    <img class="card-img-top pet-image" src="{{pet.photo_url}}" alt="Pet">
+                    <div class="card-body">
+                        <h5 class="card-title">{{pet.name}}</h5>
+                        <p class="card-text">
+                            {% if pet.age %}
+                            <div>Age: {{pet.notes}}</div>
+                            {% endif %}
+                            <div>Species: {{pet.species}}</div>
+                            {% if pet.notes %}
+                            <div>{{pet.notes}}</div>
+                            {% endif %}
+                            
+                            {% if pet.available %}
+                                <a href="#" class="btn btn-primary mt-4">Adopt</a>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}CREATA UR OWN ANIMAL!@@@@@@@@hju FDNJdgnfkgf{% endblock %}
+
+{%block body %}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="h2">Add Pet</div>
+        <form id="pet-add-form" method="POST" action="">
+            {{ form.hidden_tag() }} 
+            {% for field in form
+                if field.widget.input_type != 'hidden' %}
+                <div class="form-group">
+                    {{ field.label }}
+                    {{ field(class="form-control")}}
+                    
+                    <small class="text-danger">
+                        {% for error in field.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </small>
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-success">Done</button>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
