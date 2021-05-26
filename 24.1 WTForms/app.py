@@ -54,6 +54,29 @@ def add_pet():
         
     return render_template("form_new_pet.html", form=form)
 
+@app.route('/pets/view/<int:pet_id>', methods=['GET'])
+def view_pet(pet_id):
+    pet = Pet.query.get_or_404(pet_id)
+    return render_template("view_pet.html", pet=pet)
+
+@app.route('/pets/edit/<int:pet_id>', methods=['GET', 'POST'])
+def edit_pet(pet_id):
+    pet = Pet.query.get_or_404(pet_id)
+    form = AddPetForm(obj=pet)
+
+    if form.validate_on_submit():
+        pet.name = form.name.data
+        pet.species = form.species.data
+        pet.photo_url = form.photo_url.data or None
+        pet.age = form.age.data
+        pet.notes = form.notes.data
+        pet.available = form.available.data
+        db.session.commit()
+        flash("EDIDTED? ? ? ?@#")
+        return redirect('/')
+        
+    return render_template("form_new_pet.html", form=form, edit_mode=True)
+
 db.session.add(Pet(name="The Ratscallion", species="Chinchilla", available=False, photo_url="https://cdn.discordapp.com/attachments/830048840421343245/830526655209799680/IMG_5569.jpg"))
 db.session.add(Pet(name="Patrick", species="CAT", photo_url="https://i.imgur.com/6Mzeyvn.png"))
 db.session.add(Pet(name="Rouge the Bat", species="DOG", photo_url="https://pbs.twimg.com/profile_images/1256750221733830656/fulROGop_400x400.jpg"))

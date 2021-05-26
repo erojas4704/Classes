@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}CREATA UR OWN ANIMAL!@@@@@@@@hju FDNJdgnfkgf{% endblock %}
+
+{%block body %}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <a href="/" class="btn-primary btn my-2">Home</a>
+        <a href="/pets/edit/{{pet.id}}" class="btn-warning btn my-2">Edit</a>
+        <div>{% include 'avatar.html' %}</div>
+        <div class="display-2">{{pet.name}}</div>
+        <div>{{pet.species}}</div>
+        {% if pet.age %}<div>{{pet.age}}</div>{% endif %}
+        {% if pet.notes %}<div>{{pet.notes}}</div>{% endif %}
+    </div>
+</div>
+
+
+{% endblock %}

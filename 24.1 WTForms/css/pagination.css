@@ -27,3 +27,10 @@ body{
     transform: translate(30%, -20%)
     rotate(-45deg);
 }
+
+.profile-full{
+    max-width: 67rem;
+    max-height: 44rem;
+    width: auto;
+    height: auto;
+}

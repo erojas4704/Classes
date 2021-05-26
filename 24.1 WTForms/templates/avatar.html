@@ -1,0 +1,5 @@
+
+<img class="card-img-top pet-image" 
+src= {% if pet.photo_url %} "{{pet.photo_url}}"
+{% else %} {{"/static/pet_avatar.png"}} {% endif %}
+alt="Pet">
