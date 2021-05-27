@@ -10,10 +10,7 @@
             <div class="row justify-content-center">
                 {% for pet in pets%}
                 <div class="card col-xl-2 col-lg-3 col-md-4 col-sm-7 m-4 pt-2">
-                    <img class="card-img-top pet-image" 
-                    src= {% if pet.photo_url %} "{{pet.photo_url}}"
-                    {% else %} {{"/static/pet_avatar.png"}} {% endif %}
-                    alt="Pet">
+                    {% include 'avatar.html' %}
                     <div class="card-body">
                         <h5 class="card-title">{{pet.name}}</h5>
                         <p class="card-text">

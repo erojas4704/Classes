@@ -22,15 +22,18 @@ toolbar = DebugToolbarExtension(app)
 
 @app.route('/css/<path:path>')
 def send_css(path):
+    """CSS Subdir"""
     return send_from_directory('css', path,mimetype='text/css')
 
 @app.route('/')
 def index():
+    """Home. Show pet listing and whatever."""
     pets = Pet.query.all()
     return render_template("index.html", pets=pets)
 
 @app.route('/pets/new', methods=['GET', 'POST'])
 def add_pet():
+    """Add pet route"""
     form = AddPetForm()
     
     if form.validate_on_submit():
@@ -56,11 +59,13 @@ def add_pet():
 
 @app.route('/pets/view/<int:pet_id>', methods=['GET'])
 def view_pet(pet_id):
+    """View pet route"""
     pet = Pet.query.get_or_404(pet_id)
     return render_template("view_pet.html", pet=pet)
 
 @app.route('/pets/edit/<int:pet_id>', methods=['GET', 'POST'])
 def edit_pet(pet_id):
+    """Edit pet route"""
     pet = Pet.query.get_or_404(pet_id)
     form = AddPetForm(obj=pet)
 
