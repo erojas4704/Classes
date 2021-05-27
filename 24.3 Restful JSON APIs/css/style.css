@@ -1,0 +1,36 @@
+.userthumb{
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+}
+
+.pet-image{
+    max-width: 18rem;
+    max-height: 22rem;
+    min-width: 4rem;
+    width: auto;
+    height: auto;
+}
+
+body{
+    background-color: #2980b9;
+    overflow-x: hidden;
+}
+
+.pawprint{
+    color: #00cec959;
+    font-size: 34rem;
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    overflow: hidden;
+    transform: translate(30%, -20%)
+    rotate(-45deg);
+}
+
+.profile-full{
+    max-width: 67rem;
+    max-height: 44rem;
+    width: auto;
+    height: auto;
+}
