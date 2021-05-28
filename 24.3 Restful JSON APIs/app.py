@@ -10,7 +10,7 @@ app = Flask(__name__)
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:yourpassword@localhost/databasename'
 
 app.config['TESTING'] = True
-app.config['SQLALCipHEMY_DATABASE_URI'] = 'postgresql:///cupcakes'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///cupcakes'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = secret_key
@@ -49,6 +49,23 @@ def create_cupcake():
     )
     
     return jsonify( serialize_cupcake(cupcake) )
+
+@app.route("/api/cupcakes/<int:cupcake_id>", methods=["DELETE"])
+def delete_cupcake(cupcake_id):
+    cupcake = Cupcake.query.get_or_404(cupcake_id)
+    db.session.delete(cupcake)
+    return jsonify( message = "deleted")
+    
+@app.route("/api/cupcakes/<int:cupcake_id>", methods=["PATCH"])
+def edit_cupcake(cupcake_id):
+    cupcake = Cupcake.query.get_or_404(cupcake_id)
+    cupcake.flavor = request.form.get("flavor"),
+    cupcake.size = request.form.get("size"),
+    cupcake.rating = request.form.get("rating"),
+    cupcake.image = request.form.get("image")
+    return jsonify( serialize_cupcake(cupcake) )
+
+
 
 def serialize_cupcake(cupcake):
     """TURN IT INTO A JSON THING"""
