@@ -1,1 +1,3 @@
-secret_key = 'dfsjklvnmcdlksvlkcsdmsfgjlkhghlfsjglkfjgl;4324lk32j4k23j4l;k2j34;lj23l4j12lm;klmck;elmk;demfk;sd'
+SECRET_KEY = "d909837e7ea4525d004cac5ed07795ff"
+DB_USER = "ass"
+DB_PASSWORD = "ass"

@@ -3,24 +3,24 @@
 from flask import Flask, send_from_directory, request, redirect, render_template, flash, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from models import Cupcake, connect_db, db
-from secrets import secret_key
+from flask_sqlalchemy import SQLAlchemy
+from secrets import SECRET_KEY, DB_USER, DB_PASSWORD
 
 app = Flask(__name__)
 
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:yourpassword@localhost/databasename'
+
 
 app.config['TESTING'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///cupcakes'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{DB_USER}:{DB_PASSWORD}@localhost:5432/cupcakes'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
-app.config['SECRET_KEY'] = secret_key
+app.config['SECRET_KEY'] = SECRET_KEY
+
+print(app.config['SQLALCHEMY_DATABASE_URI'])
 
 connect_db(app)
-db.create_all()
 
-
-
-@app.route('/css/<path:path>')
+@app.route('/css/<path:path>')  
 def send_css(path):
     """CSS Subdir"""
     return send_from_directory('css', path,mimetype='text/css')
@@ -41,34 +41,41 @@ def get_cupcake(cupcake_id):
 
 @app.route("/api/cupcakes", methods=["POST"])
 def create_cupcake():
+    data = request.json
     cupcake = Cupcake(
-        flavor = request.form.get("flavor"),
-        size = request.form.get("size"),
-        rating = request.form.get("rating"),
-        image = request.form.get("image")
+        flavor = data.get("flavor"),
+        size = data.get("size"),
+        rating = data.get("rating"),
+        image = data.get("image")
     )
-    
-    return jsonify( serialize_cupcake(cupcake) )
+    db.session.add(cupcake)
+    db.session.commit()
+    return jsonify( cupcake = serialize_cupcake(cupcake) ) , 201
 
 @app.route("/api/cupcakes/<int:cupcake_id>", methods=["DELETE"])
 def delete_cupcake(cupcake_id):
     cupcake = Cupcake.query.get_or_404(cupcake_id)
     db.session.delete(cupcake)
-    return jsonify( message = "deleted")
+    db.session.commit()
+    return jsonify( message = "deleted"), 200
     
 @app.route("/api/cupcakes/<int:cupcake_id>", methods=["PATCH"])
 def edit_cupcake(cupcake_id):
     cupcake = Cupcake.query.get_or_404(cupcake_id)
-    cupcake.flavor = request.form.get("flavor"),
-    cupcake.size = request.form.get("size"),
-    cupcake.rating = request.form.get("rating"),
-    cupcake.image = request.form.get("image")
-    return jsonify( serialize_cupcake(cupcake) )
+    data = request.json
+    cupcake.flavor = data.get("flavor") or cupcake.flavor,
+    cupcake.size = data.get("size") or cupcake.size,
+    cupcake.rating = data.get("rating") or cupcake.rating,
+    cupcake.image = data.get("image") or cupcake.image
+    db.session.commit()
+
+    return jsonify( cupcake = serialize_cupcake(cupcake) ), 200
 
 
 
 def serialize_cupcake(cupcake):
     """TURN IT INTO A JSON THING"""
+    print(f"CREATING COOPCKAE {cupcake.id}")
     return {
         "id": cupcake.id,
         "flavor": cupcake.flavor,
@@ -76,20 +83,3 @@ def serialize_cupcake(cupcake):
         "rating": cupcake.rating,
         "image": cupcake.image
     }
-
-    
-c1 = Cupcake(
-    flavor="cherry",
-    size="large",
-    rating=5,
-)
-
-c2 = Cupcake(
-    flavor="chocolate",
-    size="small",
-    rating=9,
-    image="https://www.bakedbyrachel.com/wp-content/uploads/2018/01/chocolatecupcakesccfrosting1_bakedbyrachel.jpg"
-)
-
-db.session.add_all([c1, c2])
-db.session.commit()
