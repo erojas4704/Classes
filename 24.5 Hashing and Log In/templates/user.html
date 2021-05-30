@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}User{% endblock %}
+
+{% block body %}
+    <div class="display-4 text-primary pb-2">{{user.username}}</div>
+    <div>You made it!</div>
+    <div>Welcome to your very own corner of the dark web, {{user.first_name}} {{user.last_name}}!</div>
+    <div class="pb-4">Your e-mail address if you forgot it. {{user.email}}</div>
+
+    <form action="/logout" method="POST">
+        <a href="/users/{{user.username}}/feedback/add" class="btn btn-outline-success">Add Feedback</a>
+        <a href="/" class="btn btn-outline-primary">Back</a>
+        <button type="submit" class="btn btn-danger ml-5">Log Out</button>
+        <a href="/users/{{user.username}}/delete" class="btn btn-danger">Delete</a>
+    </form>
+
+
+    <div class="pt-3">
+        {% for feedback in user.feedbacks %}
+            <div class="pb-4">
+                <div class=>{{feedback.title}}
+                    <a href="/feedback/{{feedback.id}}/update" class="fas fa-edit"></a> 
+                    <form action="/feedback/{{feedback.id}}/delete" method="post" class="d-inline col text-center">
+                        <button type="submit" class="btn btn-default"><i class="far fa-trash-alt text-danger"></i></button>
+                    </form>
+                <div><small>{{feedback.content}}</small></div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
