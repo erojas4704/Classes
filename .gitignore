@@ -5,7 +5,9 @@ venv/
 19.1 Flask/venv
 **/venv
 **/secrets.py
+/venv
 Questions.txt
 
-
+00 Fun
 pylintrc
+node_modules
