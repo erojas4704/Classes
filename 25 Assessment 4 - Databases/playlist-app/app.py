@@ -138,8 +138,6 @@ def add_song_to_playlist(playlist_id):
     songs = [(song.id, song.title) for song in Song.query.all() if song.id not in curr_on_playlist]
     form.song.choices = songs
 
-    print(songs)
-    print(f"IN PLAYLIST {curr_on_playlist}")
 
     if form.validate_on_submit():
         playlist_song = PlaylistSong(song_id=form.song.data, playlist_id=playlist_id)
