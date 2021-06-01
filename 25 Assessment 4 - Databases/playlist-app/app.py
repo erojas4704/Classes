@@ -1,13 +1,16 @@
-from flask import Flask, redirect, render_template
+from flask import Flask, redirect, render_template, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 
 from models import db, connect_db, Playlist, Song, PlaylistSong
 from forms import NewSongForPlaylistForm, SongForm, PlaylistForm
+from secrets import SECRET_KEY, DB_USER, DB_PASSWORD
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///playlist-app'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{DB_USER}:{DB_PASSWORD}@localhost:5432/flaskfeedback'
+app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 connect_db(app)
 db.create_all()
@@ -44,6 +47,9 @@ def show_all_playlists():
 @app.route("/playlists/<int:playlist_id>")
 def show_playlist(playlist_id):
     """Show detail on specific playlist."""
+    playlist = Playlist.query.get_or_404(playlist_id)
+    return render_template("playlist.html", playlist=playlist)
+
 
     # ADD THE NECESSARY CODE HERE FOR THIS ROUTE TO WORK
 
@@ -55,8 +61,17 @@ def add_playlist():
     - if form not filled out or invalid: show form
     - if valid: add playlist to SQLA and redirect to list-of-playlists
     """
-
     # ADD THE NECESSARY CODE HERE FOR THIS ROUTE TO WORK
+    form = PlaylistForm()
+
+    if form.validate_on_submit():
+        playlist = Playlist()
+        form.populate_obj(playlist)
+        db.session.add(playlist)
+        db.session.commit()
+        return redirect(url_for('show_all_playlists'))
+
+    return render_template("new_playlist.html", form=form)
 
 
 ##############################################################################
@@ -74,6 +89,9 @@ def show_all_songs():
 @app.route("/songs/<int:song_id>")
 def show_song(song_id):
     """return a specific song"""
+    song = Song.query.get_or_404(song_id)
+    return render_template("song.html", song=song)
+
 
     # ADD THE NECESSARY CODE HERE FOR THIS ROUTE TO WORK
 
@@ -87,6 +105,16 @@ def add_song():
     """
 
     # ADD THE NECESSARY CODE HERE FOR THIS ROUTE TO WORK
+    form = SongForm()
+
+    if form.validate_on_submit():
+        song = Song()
+        form.populate_obj(song)
+        db.session.add(song)
+        db.session.commit()
+        return redirect(url_for('show_all_songs'))
+
+    return render_template("new_song.html", form=form)
 
 
 @app.route("/playlists/<int:playlist_id>/add-song", methods=["GET", "POST"])
@@ -102,14 +130,22 @@ def add_song_to_playlist(playlist_id):
 
     # Restrict form to songs not already on this playlist
 
-    curr_on_playlist = ...
-    form.song.choices = ...
+    curr_on_playlist = [song.id for song in playlist.songs]
+    #form.song.choices = (db.session.query(Song.id, Song.title)
+    #                  .filter(Song.id.notin_(curr_on_playlist))
+    #                  .all())
+    
+    songs = [(song.id, song.title) for song in Song.query.all() if song.id not in curr_on_playlist]
+    form.song.choices = songs
+
+    print(songs)
+    print(f"IN PLAYLIST {curr_on_playlist}")
 
     if form.validate_on_submit():
-
-          # ADD THE NECESSARY CODE HERE FOR THIS ROUTE TO WORK
-
-          return redirect(f"/playlists/{playlist_id}")
+        playlist_song = PlaylistSong(song_id=form.song.data, playlist_id=playlist_id)
+        db.session.add(playlist_song)
+        db.session.commit()
+        return redirect(f"/playlists/{playlist_id}")
 
     return render_template("add_song_to_playlist.html",
                              playlist=playlist,

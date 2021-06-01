@@ -73,15 +73,23 @@ SELECT title, name as studio_name FROM movies JOIN studios ON studios.id = movie
 
 
 \```sql
-
+movies_db=# SELECT first_name, last_name FROM movies
+JOIN roles ON movies.id = roles.movie_id
+JOIN stars ON roles.star_id = stars.id
+WHERE rating = 'G'
+GROUP BY first_name, last_name, star_id;
 \```
 
-10. The first and last names of every star along with the number
+1.  The first and last names of every star along with the number
     of movies they have been in, in descending order by the number of movies. (Similar to #9, make sure
     that two different actors with the same name are considered separately).
 
 \```sql
-
+SELECT first_name, last_name, COUNT(*) FROM movies
+JOIN roles ON movies.id = roles.movie_id
+JOIN stars ON roles.star_id = stars.id
+GROUP BY first_name, last_name, star_id
+ORDER BY COUNT(*) DESC;
 \```
 
 ### The rest of these are bonuses

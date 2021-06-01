@@ -4,23 +4,40 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-
 class Playlist(db.Model):
     """Playlist."""
-
-    # ADD THE NECESSARY CODE HERE
+    __tablename__ = "playlists"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String, 
+        info={'label': 'Playlist Name'},
+        nullable=False, 
+        unique=True)
+    description = db.Column(db.Text,
+        info={'label': 'Description'},
+        nullable=False, 
+        unique=True)
+    songs = db.relationship('Song',
+    secondary="playlistsongs",
+    backref="playlists")
 
 
 class Song(db.Model):
     """Song."""
-
-    # ADD THE NECESSARY CODE HERE
+    __tablename__ = "songs"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String,
+        info={'label': 'Title'}, 
+        nullable=False)
+    artist = db.Column(db.String,
+        info={'label': 'Artist'}, 
+        nullable=False)
 
 
 class PlaylistSong(db.Model):
     """Mapping of a playlist to a song."""
-
-    # ADD THE NECESSARY CODE HERE
+    __tablename__ = "playlistsongs"
+    song_id = db.Column(db.Integer, db.ForeignKey('songs.id'), nullable=False, primary_key=True)
+    playlist_id = db.Column(db.Integer, db.ForeignKey('playlists.id'), nullable=False, primary_key=True)
 
 
 # DO NOT MODIFY THIS FUNCTION
