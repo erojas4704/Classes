@@ -1,11 +1,11 @@
 import os
 
-from flask import Flask, render_template, request, flash, redirect, session, g
+from flask import Flask, render_template, request, flash, redirect, session, g, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
-from forms import UserAddForm, LoginForm, MessageForm
-from models import db, connect_db, User, Message
+from forms import UserAddForm, LoginForm, MessageForm, EditProfileForm
+from models import db, connect_db, User, Message, Likes
 
 CURR_USER_KEY = "curr_user"
 
@@ -15,12 +15,13 @@ from secrets import SECRET_KEY, DB_USER, DB_PASSWORD
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    os.environ.get('DATABASE_URL', f'postgresql://{DB_USER}:{DB_PASSWORD}@localhost:5432/warbler'))
+    os.environ.get('DATABASE_URL', f'postgresql://{DB_USER}:{DB_PASSWORD}@localhost:5433/warbler'))
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', SECRET_KEY)
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
@@ -46,12 +47,15 @@ def do_login(user):
 
     session[CURR_USER_KEY] = user.id
 
-
+@app.route('/logout', methods=["GET"])
 def do_logout():
     """Logout user."""
 
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
+
+    flash("You have succcessfully been logged out.")
+    return redirect(url_for("login"))
 
 
 @app.route('/signup', methods=["GET", "POST"])
@@ -136,6 +140,28 @@ def list_users():
 
     return render_template('users/index.html', users=users)
 
+@app.route('/users/add_like/<int:message_id>', methods=["POST"])
+def like_post(message_id):
+    message = Message.query.get(message_id)
+
+    
+    if message in g.user.likes:
+        #user already likes it. Unlike it
+        like = Likes.query.filter(Likes.user_id == g.user.id, Likes.message_id == message.id)
+        db.session.delete(like)
+        db.session.commit()
+        return redirect("/")
+    
+    raise
+
+    like = Likes(
+        user_id = g.user.id,
+        message_id = message_id
+    )
+    db.session.add(like)
+    db.session.commit()
+
+    return redirect("/")
 
 @app.route('/users/<int:user_id>')
 def users_show(user_id):
@@ -212,7 +238,25 @@ def stop_following(follow_id):
 def profile():
     """Update profile for current user."""
 
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    form = EditProfileForm(obj = g.user)
+
+    if form.validate_on_submit():
+        if User.authenticate(g.user.username, form.password.data):
+            flash("Attaboy", "success")
+            form.populate_obj(g.user)
+            db.session.commit()
+        else:
+            flash("Invalid password dipstick.", "danger")
+            return redirect('/users/profile')
+        
+        return redirect("/")
+        
     # IMPLEMENT THIS
+    return render_template("users/edit.html", form = form, user = g.user)
 
 
 @app.route('/users/delete', methods=["POST"])
@@ -293,13 +337,16 @@ def homepage():
     """
 
     if g.user:
+        following_ids = [f.id for f in g.user.following] + [g.user.id]
         messages = (Message
                     .query
+                    .filter(Message.user_id.in_(following_ids))
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
 
-        return render_template('home.html', messages=messages)
+        likes = [message.id for message in g.user.likes]
+        return render_template('home.html', messages=messages, likes = likes)
 
     else:
         return render_template('home-anon.html')
