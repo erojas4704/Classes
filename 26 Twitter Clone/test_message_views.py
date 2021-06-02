@@ -9,13 +9,14 @@ import os
 from unittest import TestCase
 
 from models import db, connect_db, Message, User
+from secrets import DB_USER, DB_PASSWORD
 
 # BEFORE we import our app, let's set an environmental variable
 # to use a different database for tests (we need to do this
 # before we import our app, since that will have already
 # connected to the database
 
-os.environ['DATABASE_URL'] = "postgresql:///warbler-test"
+os.environ['DATABASE_URL'] = f"postgresql://{DB_USER}:{DB_PASSWORD}@localhost:5432/warbler_test"
 
 
 # Now we can import app
@@ -65,9 +66,11 @@ class MessageViewTestCase(TestCase):
             # the rest of ours test
 
             resp = c.post("/messages/new", data={"text": "Hello"})
+            print(resp)
 
             # Make sure it redirects
             self.assertEqual(resp.status_code, 302)
 
             msg = Message.query.one()
             self.assertEqual(msg.text, "Hello")
+

@@ -15,7 +15,7 @@ from secrets import SECRET_KEY, DB_USER, DB_PASSWORD
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    os.environ.get('DATABASE_URL', f'postgresql://{DB_USER}:{DB_PASSWORD}@localhost:5433/warbler'))
+    os.environ.get('DATABASE_URL', f'postgresql://{DB_USER}:{DB_PASSWORD}@localhost:5432/warbler'))
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
@@ -140,19 +140,22 @@ def list_users():
 
     return render_template('users/index.html', users=users)
 
+@app.route('/users/<int:user_id>/likes', methods=["GET"])
+def view_likes(user_id):
+    user = User.query.get_or_404(user_id)
+    print(user.likes)
+    return render_template('users/likes.html', user=user)
+
 @app.route('/users/add_like/<int:message_id>', methods=["POST"])
 def like_post(message_id):
     message = Message.query.get(message_id)
-
     
     if message in g.user.likes:
         #user already likes it. Unlike it
-        like = Likes.query.filter(Likes.user_id == g.user.id, Likes.message_id == message.id)
+        like = Likes.query.filter(Likes.user_id == g.user.id, Likes.message_id == message.id).first()
         db.session.delete(like)
         db.session.commit()
         return redirect("/")
-    
-    raise
 
     like = Likes(
         user_id = g.user.id,
