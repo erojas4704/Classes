@@ -1,7 +1,10 @@
-{% extends 'base.html' %}
-{% block title %}Feedback{% endblock %}
-
-{% block body %}
+<!doctype html>
+<html>
+<head>
+  <title>LuckyNum</title>
+  <script src="https://unpkg.com/jquery"></script>
+</head>
+<body>
 
 <form id="lucky-form">
   <div>Name: <input id="name"> <b id="name-err"></b> </div>
@@ -13,6 +16,8 @@
 
 <div id="lucky-results"></div>
 
+<script src="https://unpkg.com/axios/dist/axios.js"></script>
 <script src="/static/lucky.js"></script>
 
-{% endblock %}
+</body>
+</html>
