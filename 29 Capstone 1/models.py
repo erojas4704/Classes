@@ -25,7 +25,7 @@ class Player(db.Model):
     """The model for the users in games. This will record all game statistics for that user and game, as well."""
     __tablename__ = 'players'
 
-    player_id = db.Column(
+    user_id = db.Column(
         db.Integer,
         db.ForeignKey('users.id', ondelete="cascade"),
         primary_key=True,
@@ -48,8 +48,8 @@ class User(db.Model):
 
     games = db.relationship(
         "Game",
-        secondary="player",
-        primaryjoin=(Player.player_id == id)
+        secondary="players",
+        primaryjoin=(Player.user_id == id)
     )
     
     @classmethod
