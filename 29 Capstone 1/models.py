@@ -12,17 +12,11 @@ def connect_db(app):
     db.create_all()
 
 
-class Game(db.Model):
-    """The model for the Game"""
-    __tablename__ = 'games'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-
-    start = db.Column(db.DateTime, nullable=False)
-    end = db.Column(db.DateTime, nullable=False)
 
 class Player(db.Model):
-    """The model for the users in games. This will record all game statistics for that user and game, as well."""
+    """The model for the users in games. 
+    This will record all game statistics for that user and game, as well."""
     __tablename__ = 'players'
 
     user_id = db.Column(
@@ -37,6 +31,25 @@ class Player(db.Model):
         primary_key=True,
     )
 
+class Game(db.Model):
+    """The model for the Game"""
+    __tablename__ = 'games'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+    start = db.Column(db.DateTime, nullable=False)
+    end = db.Column(db.DateTime, nullable=False)
+
+    players = db.relationship("User", 
+                            secondary="players", 
+                            backref="games")
+    """
+    players = db.relationship(
+        "User",
+        secondary="players",
+        primaryjoin=(Player.game_id == id)
+    )"""
+
 class User(db.Model):
     """The model for the User"""
     __tablename__ = 'users'
@@ -46,11 +59,11 @@ class User(db.Model):
     password = db.Column(db.Text, nullable=False)
     displayname = db.Column(db.Text, nullable=False, unique=True)
 
-    games = db.relationship(
-        "Game",
-        secondary="players",
-        primaryjoin=(Player.user_id == id)
-    )
+    #games = db.relationship(
+    #    "Game",
+    #    secondary="players",
+    #    primaryjoin=(Player.user_id == id)
+    #)
     
     @classmethod
     def register(cls, email, displayname, password):
@@ -76,3 +89,11 @@ class User(db.Model):
 
     def __repr__(self):
         return f"<User #{self.email}: {self.displayname}>"
+
+class Stock(db.Model):
+    """Stock Model"""
+    __tablename__ = 'stocks'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+    symbol = db.Column(db.Text, nullable=False, unique=True)
+
