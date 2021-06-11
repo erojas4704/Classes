@@ -62,6 +62,10 @@ class Game(db.Model):
     )
 
     players = relationship(
+        "Player"
+    )
+
+    users = relationship(
         "User",
         secondary="players"
     )
@@ -74,7 +78,7 @@ class Game(db.Model):
         """Add player to the game if a player isn't already in the game and the password is correct"""
         if self.password is None or password == self.password:
             if user not in self.players:
-                self.players.append(user)
+                self.users.append(user)
                 player = self.get_player(user)
                 player.balance = self.starting_balance
                 db.session.commit()

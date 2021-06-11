@@ -1,7 +1,7 @@
 """Flask app 24.5"""
 from flask import Flask, send_from_directory, request, redirect, render_template, flash, jsonify, session, g 
 from flask_debugtoolbar import DebugToolbarExtension
-from models import User, connect_db, db, Game
+from models import User, connect_db, db, Game, Player
 #from forms import RegisterUserForm, LoginForm, FeedbackForm, PasswordForm
 from flask_sqlalchemy import SQLAlchemy
 from secrets import SECRET_KEY, DB_USER, DB_PASSWORD, DB_PORT
