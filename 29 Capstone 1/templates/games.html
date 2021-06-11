@@ -1,4 +1,16 @@
 {% extends 'base.html' %}
 {% block body %}
 GAMES LOL
+<div class="row">
+    <div class="col-3">
+        <ul class="list-group">
+            {% if user %}
+                {% for game in user.games %}
+                <a href="/games/{{game.id}}" class="list-group-item">Game {{game.id}}</a>
+                {% endfor %}
+            {% endif %}
+            <a href="/newgame" class="list-group-item">New Game</a>
+        </ul>
+    </div>
+</div>
 {% endblock %}
