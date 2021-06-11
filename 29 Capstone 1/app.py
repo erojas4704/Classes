@@ -1,7 +1,7 @@
 """Flask app 24.5"""
 from flask import Flask, send_from_directory, request, redirect, render_template, flash, jsonify, session, g 
 from flask_debugtoolbar import DebugToolbarExtension
-from models import User, connect_db, db, Game, Player
+from models import User, connect_db, db, Game, Player, Stock
 #from forms import RegisterUserForm, LoginForm, FeedbackForm, PasswordForm
 from flask_sqlalchemy import SQLAlchemy
 from secrets import SECRET_KEY, DB_USER, DB_PASSWORD, DB_PORT
@@ -28,9 +28,13 @@ def add_user_to_g():
         if user:
             g.user = user
         else:
-            redirect("/")
+            g.user = None
+            del session[CURR_USER_KEY]
+            flash("Invalid user")
+            return redirect("/")
     else:
         g.user = None
+    
 
 @app.route('/css/<path:path>')  
 def send_css(path):
@@ -45,6 +49,8 @@ def send_js(path):
 @app.route('/')
 def send_index():
     """Landing Page"""
+    add_user_to_g()
+    
     return render_template("index.html", user = g.user)
     
 
@@ -107,6 +113,21 @@ def view_game(game_id):
     flash("Invalid game session.")
     return redirect('/games')
         
+@app.route('/games/<int:game_id>/stocks', methods=['GET'])
+def view_stocks(game_id):
+    """Stock listings for a game."""
+    game = Game.query.get(game_id)
+    stocks = Stock.query.all()
+
+    for stock in stocks:
+        stock.update()
+
+    if game:
+        return render_template('stocks.html', user = g.user, game = game, stocks = stocks)
+
+    flash("Invalid game session.")
+    return redirect('/games')
+
 
 
 @app.route('/register', methods=['GET', 'POST'])

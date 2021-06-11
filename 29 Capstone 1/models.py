@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from flask_bcrypt import Bcrypt
 from datetime import date, timedelta
+import market
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
@@ -14,13 +15,102 @@ def connect_db(app):
     db.init_app(app)
     db.create_all()
 
+class Stock(db.Model):
+    """The model for stocks"""
+    __tablename__ = 'stocks'
+    symbol = db.Column(
+        db.Text,
+        primary_key = True,
+        unique=True,
+        nullable = False
+    )
 
+    open = db.Column(
+        db.Float,
+        default = 0
+    )
+
+    close = db.Column(
+        db.Float,
+        default = 0
+    )
+
+    current = db.Column(
+        db.Float,
+        default = 0
+    )
+
+    high = db.Column(
+        db.Float,
+        default = 0
+    )
+
+    low = db.Column(
+        db.Float,
+        default = 0
+    )
+
+    last_updated = None
+
+    def update(self):
+        """Update a stock from the remote API. TODO Only if the stock hasn't been updated in the last 5 min. """
+        resp = market.quote(self.symbol.upper())
+
+        if self.last_updated is None:
+            minutes = 9999
+        else:
+            time_difference = date.today() - self.last_updated
+            minutes = time_difference.total_seconds()/60
+
+        if minutes < 5:
+            return False
+
+
+        self.current = resp['c']
+        self.open = resp['o']
+        self.close = resp['pc']
+        self.high = resp['h']
+        self.low = resp['l']
+        return resp
+
+class GameStock(db.Model):
+    """Model for stocks owned by players in a game"""
+    __tablename__ = 'gamestocks'
+    id = db.Column(
+        db.Integer,
+        primary_key = True,
+        autoincrement=True
+    )
+
+    player_id = db.Column(
+        db.Integer,
+        db.ForeignKey('players.id', ondelete="cascade")
+    )
+
+    symbol = db.Column(
+        db.Text,
+        db.ForeignKey('stocks.symbol')
+    )
+
+    position = db.Column(
+        db.Float,
+        default = 0
+    )
 
 
 class Player(db.Model):
     """The model for the users in games. 
     This will record all game statistics for that user and game, as well."""
     __tablename__ = 'players'
+
+    id = db.Column(
+        db.Integer,
+        unique = True,
+        primary_key = True,
+        autoincrement=True
+    )
+
+    user = relationship("User")
 
     user_id = db.Column(
         db.Integer,
@@ -42,6 +132,9 @@ class Player(db.Model):
     color = db.Column(
         db.Integer
     )
+
+    def __repr__(self):
+        return f"<{user.displayname}: {balance}>"
 
 class Game(db.Model):
     """The model for the Game"""
@@ -111,6 +204,10 @@ class User(db.Model):
     email = db.Column(db.Text, nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)
     displayname = db.Column(db.Text, nullable=False, unique=True)
+
+    avatar_url = db.Column(
+        db.Text
+    )
     
     games = db.relationship(
         "Game",
@@ -144,11 +241,4 @@ class User(db.Model):
 
     def __repr__(self):
         return f"<User #{self.email}: {self.displayname}>"
-
-class Stock(db.Model):
-    """Stock Model"""
-    __tablename__ = 'stocks'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-
-    symbol = db.Column(db.Text, nullable=False, unique=True)
 
