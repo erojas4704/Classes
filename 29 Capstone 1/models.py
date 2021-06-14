@@ -3,7 +3,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from flask_bcrypt import Bcrypt
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
+from secrets import STOCK_UPDATE_LIMIT_MINUTES
 import market
 
 db = SQLAlchemy()
@@ -23,6 +24,10 @@ class Stock(db.Model):
         primary_key = True,
         unique=True,
         nullable = False
+    )
+
+    name = db.Column(
+        db.Text
     )
 
     open = db.Column(
@@ -50,52 +55,93 @@ class Stock(db.Model):
         default = 0
     )
 
-    last_updated = None
+    last_updated = db.Column(
+        db.DateTime
+    )
 
-    def update(self):
+    def serialize(self):
+        """Return a dictionary serialized verion of the stock"""
+        stock_dict = {
+            "symbol": self.symbol,
+            "name": self.name,
+            "open": self.open,
+            "close": self.close,
+            "current": self.current,
+            "high": self.high,
+            "low": self.low,
+            "last_updated": self.last_updated
+        }
+        return stock_dict
+
+    def update(self, force = False):
         """Update a stock from the remote API. TODO Only if the stock hasn't been updated in the last 5 min. """
-        resp = market.quote(self.symbol.upper())
 
-        if self.last_updated is None:
+        if self.last_updated is None or force:
             minutes = 9999
         else:
-            time_difference = date.today() - self.last_updated
+            time_difference = datetime.now() - self.last_updated
             minutes = time_difference.total_seconds()/60
 
-        if minutes < 5:
+        if minutes < STOCK_UPDATE_LIMIT_MINUTES:
             return False
+        
+        self.last_updated = datetime.now()
+            
+        resp = market.quote(self.symbol.upper())
 
+        if self.name is None:
+            basic = market.basic_details(self.symbol.upper())
 
-        self.current = resp['c']
-        self.open = resp['o']
-        self.close = resp['pc']
-        self.high = resp['h']
-        self.low = resp['l']
+            if basic:
+                self.name = basic["name"]
+
+        if resp:
+            self.current = resp['c']
+            self.open = resp['o']
+            self.close = resp['pc']
+            self.high = resp['h']
+            self.low = resp['l']
+
+        db.session.commit()
         return resp
 
-class GameStock(db.Model):
-    """Model for stocks owned by players in a game"""
-    __tablename__ = 'gamestocks'
-    id = db.Column(
-        db.Integer,
-        primary_key = True,
-        autoincrement=True
-    )
+class PlayerStock(db.Model):
+    """The model for a player's stocks"""
+    __tablename__ = 'playerstocks'
 
     player_id = db.Column(
         db.Integer,
-        db.ForeignKey('players.id', ondelete="cascade")
+        db.ForeignKey('players.id', ondelete="cascade"),
+        primary_key=True,
     )
 
     symbol = db.Column(
         db.Text,
-        db.ForeignKey('stocks.symbol')
+        db.ForeignKey('stocks.symbol', ondelete="cascade"),
+        primary_key=True
     )
 
-    position = db.Column(
-        db.Float,
+    quantity = db.Column(
+        db.Integer,
+        nullable=False,
         default = 0
     )
+
+    money_spent = db.Column(
+        db.Float,
+        nullable=False,
+        default = 0
+    )
+
+    stock = relationship("Stock")
+    
+    def serialize(self):
+        """Make it JSON friendly"""
+        return {
+            'symbol': self.symbol,
+            'quantity': self.quantity,
+            'money_spent': self.money_spent
+        }
 
 
 class Player(db.Model):
@@ -133,8 +179,40 @@ class Player(db.Model):
         db.Integer
     )
 
+    stocks = db.relationship(
+        "PlayerStock"
+    )
+
+    def get_total_worth(self):
+        """Calculate the value of all owned stocks + balance"""
+        port = self.get_portfolio_value()
+
+        return port + self.balance
+
+
+    def get_portfolio_value(self):
+        """Calculate the value of all owned stocks"""
+        value = 0
+        for stock in self.stocks:
+            value += stock.quantity * stock.stock.current
+
+        return value
+
+
+    def serialize(self):
+        """Return a dictionary describing this object."""
+        return {
+            "id": self.id,
+            "gameID": self.game_id,
+            "userID": self.user_id,
+            "balance": self.balance,
+            "color": self.color,
+            "portfolio": self.get_portfolio_value(),
+            "stocks": [stock.serialize() for stock in self.stocks]
+        }
+
     def __repr__(self):
-        return f"<{user.displayname}: {balance}>"
+        return f"<{self.user.displayname}: {self.balance}>"
 
 class Game(db.Model):
     """The model for the Game"""
@@ -142,12 +220,15 @@ class Game(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    start = db.Column(db.DateTime, nullable=False)
-    end = db.Column(db.DateTime, nullable=False)
+    start = db.Column(db.DateTime)
+    end = db.Column(db.DateTime)
     starting_balance = db.Column(db.Float, nullable=False)
     max_players = db.Column(db.Integer, nullable=False)
     fractional_shares = db.Column(db.Boolean)
     password = db.Column(db.Text)
+    minutes = db.Column(db.Float, nullable=False)
+    hours = db.Column(db.Float, nullable=False)
+    days = db.Column(db.Float, nullable=False)
 
     host_id = db.Column(
         db.Integer,
@@ -163,9 +244,39 @@ class Game(db.Model):
         secondary="players"
     )
 
+    allow_off_market_trades = db.Column(
+        db.Boolean,
+        default = False
+    )
+
+    duration = None
+    active = db.Column(
+        db.Boolean,
+        default = False,
+        nullable = False
+    )
+
+    def serialize(self):
+        """JSON Friendly Dict"""
+        return {
+            "active": self.active,
+            "players": [player.serialize() for player in self.players],
+            "start": self.start,
+            "end": self.end,
+            "id": self.id
+        }
+
     def get_player(self, user):
         """Get the game's player reference from a global user"""
-        return Player.query.filter(User.id == user.id, Game.id == self.id).first()
+        if not user:
+            return None
+
+        player = Player.query.filter(Player.user_id == user.id, Player.game_id == self.id).first()
+
+        if player and user.id != player.user_id:
+            return None
+            
+        return player
 
     def add_player(self, user, password = None):
         """Add player to the game if a player isn't already in the game and the password is correct"""
@@ -179,20 +290,25 @@ class Game(db.Model):
         
         return False
 
+    def start_game(self):
+        """Starts the game. Calculates the end time"""
+        duration = timedelta(
+            days = self.days,
+            minutes = self.minutes,
+            hours = self.hours
+        )
 
+        self.start = datetime.now()
+        self.end = self.start + duration
+        self.active = True
+
+        db.session.commit()
 
     @classmethod
-    def generate_game(cls, minutes, hours, days):
+    def generate_game(cls):
         """Given a duration, creates a game and automatically sets the start time to be now and end time to be start time + the duration."""
-        start = date.today()
-        end = start + timedelta(
-            days=days,
-            minutes=minutes,
-            hours=hours
-        )
-        
-
-        return Game(start = start, end = end)
+        return Game()
+    
 
 
 
