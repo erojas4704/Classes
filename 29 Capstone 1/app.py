@@ -73,7 +73,8 @@ def login_page():
 
 @app.route('/games', methods=['GET'])
 def games_page():
-    return render_template("games.html", user = g.user)
+    public_games = Game.query.filter(Game.password == None).all()
+    return render_template("games.html", user = g.user, public_games = public_games)
 
 @app.route('/newgame', methods=['GET', 'POST'])
 def new_game_form():
@@ -116,7 +117,7 @@ def view_game(game_id):
 def view_stocks(game_id):
     """Stock listings for a game."""
     game = Game.query.get(game_id)
-    stocks = Stock.query.limit(10).all()
+    stocks = Stock.query.order_by(Stock.symbol).all()
 
     #for stock in stocks:
     #    stock.update()

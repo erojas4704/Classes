@@ -13,6 +13,12 @@ try:
     db.session.add(
         User.register("kenton_porner@gmail.com", "Kenton", "123456")
     )
+    db.session.add(
+        User.register("elputotulio@gmail.com", "Tulio Elputo", "123456")
+    )
+    db.session.add(
+        User.register("donamaria@gmail.com", "Doña Maria", "123456")
+    )
 except IntegrityError:
     print("User already exists")
 

@@ -17,6 +17,23 @@ $(() => {
         setInterval(gameTick, 1000);
     });
 
+    function calculatePortfolioValue(player){
+        //Calculate the value of of the player using local stockdata.
+        let value = 0;
+        let invalid = false;
+        
+        player.stocks.forEach( stock => {
+            if(! stockData["symbol"]) {
+                return;
+            }
+
+            let cost = stockData["symbol"].current;
+            value += cost;
+        });
+
+        return value;
+    }
+
     function gameTick(){
         let secondsRemaining = Math.floor((new Date(game.end) - Date.now())/1000);
         updateTimer(secondsRemaining);
@@ -34,12 +51,15 @@ $(() => {
         let returns = player.portfolio - getTotalSpentByPlayer(player);
         let className = "";
 
+        let portfolioValue = calculatePortfolioValue(player) || player.portfolio;
+
         if(returns > 0 ){
             className = "text-success";
         }else if(returns < 0){
             className = "text-danger";
         }
 
+        $('.g-portfolio', frame).text(`Portfolio: ${formatMoney(portfolioValue)} `);
         $('.g-balance', frame).text(`Balance: ${formatMoney(player.balance)} `);
         $('.g-total', frame).text(`Total: ${formatMoney(total)} `);
         $('.g-return', frame).html(`Return: <span class="${className} font-weight-bold">${formatMoney(returns, true)} </span>`);
@@ -70,6 +90,15 @@ $(() => {
     }
 
     function updateTimer(secondsRemaining){
+        $("#timer").text("Game ends in " + secondsToEnglish(secondsRemaining));
+        console.log("TIMER")
+        console.log("Game ends in " + secondsToEnglish(secondsRemaining))
+
+        if(!game.active || secondsRemaining < 0 ){
+            $("#timer").text('');
+            return;
+        }
+
         if(timerActive) {
             pollTimer ++;
             if(pollTimer > POLLRATE){
@@ -82,12 +111,7 @@ $(() => {
             }
         }
 
-        if(!game.active || secondsRemaining < 0 ){
-            $("#timer").text('');
-            return;
-        }
 
-        $("#timer").text("Game ends in " + secondsToEnglish(secondsRemaining));
     }
 
     function secondsToEnglish(seconds){
