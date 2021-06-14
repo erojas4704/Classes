@@ -3,6 +3,8 @@ $(() => {
     const gameID = data.data("gameid");
     let game;
     let pollTimer = 0;
+    let timerActive = true;
+    let stockData = {};
 
     const POLLRATE = 1;
 
@@ -52,14 +54,32 @@ $(() => {
 
         game = resp;
 
+        await getAllOwnedStocks(game.players);
         renderAllPlayers(game.players);
+        console.log(stockData);
+        return resp;
+    }
+
+    async function getAllOwnedStocks(players){
+        players.forEach( p => {
+            p.stocks.forEach( async s => {
+                stock = await getStockDetails(s.symbol);
+                stockData[s.symbol] = stock;
+            });
+        })
     }
 
     function updateTimer(secondsRemaining){
-        pollTimer ++;
-        if(pollTimer > POLLRATE){
-            pollTimer = 0;
-            getAndRenderStateFromRemote();
+        if(timerActive) {
+            pollTimer ++;
+            if(pollTimer > POLLRATE){
+                pollTimer = 0;
+                timerActive = false;
+                //Wait for it to load before doing anything else
+                getAndRenderStateFromRemote().then( r => {
+                    timerActive = true;
+                });
+            }
         }
 
         if(!game.active || secondsRemaining < 0 ){
