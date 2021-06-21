@@ -1,0 +1,36 @@
+ls list directory
+cat see file contents
+ln -s #symbolic link
+man # manual in wsl
+
+find <dir> 
+find . -name 'dog'  # exact contents
+find . -name '*dog*' # may include
+find . -name '[asp] # any characters in brackets. like regexp
+
+find . -iname case insensitive
+
+grep # find within file
+grep '' filename.txt
+-i makes case insensitiave
+-B NUM - B X X lines before
+-A 3 # 3 lines after
+-C X number of lines either side
+-v inverts pattern
+-c Counts
+-n Line number
+grep -iv 'c' Find every line that isn't C case insentitive.
+
+. matches any characater
+-w matches a complete word grep -w '....' word 4 characters long
+
+-r grep can search recursively with -r
+
+mkdir
+
+git clone <url> 
+
+loupe <- visualizes async callbacks
+
+JS Promises can be chained. This should help you with the nesting.
+you can .catch an error at the end. this will count for any of <i class="fa fa-themeisle" aria-hidden="true"></i>
