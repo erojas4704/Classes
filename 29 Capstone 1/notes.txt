@@ -1,6 +1,0 @@
-https://stocknewsapi.com/?ref=apilist.fun
-
-
-To get news stories
-
-https://www.chartjs.org/
