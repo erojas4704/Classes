@@ -1,0 +1,178 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Node Files</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,600,700,400italic,600italic,700italic|Source+Code+Pro:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Springboard</p>
+
+            <p class="title">Node Files</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Node Files</a><ul>
+<li><a class="reference internal" href="#step-0">Step 0</a></li>
+<li><a class="reference internal" href="#step-1">Step 1</a></li>
+<li><a class="reference internal" href="#step-2">Step 2</a></li>
+<li><a class="reference internal" href="#step-3">Step 3</a></li>
+<li><a class="reference internal" href="#further-study">Further Study</a></li>
+<li><a class="reference internal" href="#solution">Solution</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="node-files">
+<h1>Node Files</h1>
+<p><a class="reference external" href="../node-files.zip">Download exercise</a></p>
+<p>In this exercise, you will practice working with Node, NPM, and the
+<cite>file</cite> API.</p>
+<p>You’ll be building a program similar to the standard UNIX utility,
+<a class="reference external" href="http://www.linfo.org/cat.html">cat 🐈</a>.</p>
+<div class="section" id="step-0">
+<h2>Step 0</h2>
+<ul class="simple">
+<li>Run <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">init</span></code> to create a node project inside the project folder</li>
+<li>Create a git repository in your project folder</li>
+<li>Add <cite>node_modules</cite> to a <cite>.gitignore</cite> file</li>
+</ul>
+</div>
+<div class="section" id="step-1">
+<h2>Step 1</h2>
+<p>In <cite>step1.js</cite>, write a function, <cite>cat</cite>.</p>
+<p>It should take one argument, <cite>path</cite>, and it should read the file with
+that path, and print the contents of that file.</p>
+<p>Then, write some code that calls that function, allowing you to
+specify the path argument via the command line. For example:</p>
+<pre class="console literal-block">
+$ <span class="cmd">node step1.js one.txt</span>
+This is file one.
+</pre>
+<p>If you give it the path of a non-existent file, it should print
+that error and halt the script execution:</p>
+<pre class="console literal-block">
+$ <span class="cmd">node step1.js huh.txt</span>
+Error reading huh.txt:
+  Error: ENOENT: no such file or directory, open 'huh.txt'
+</pre>
+</div>
+<div class="section" id="step-2">
+<h2>Step 2</h2>
+<p>Copy over your <cite>step1.js</cite> code to <cite>step2.js</cite></p>
+<p>Add a new function, <cite>webCat</cite>. This should take a URL and, using
+<a class="reference external" href="https://github.com/axios/axios#installing">axios</a>, should read the content of that URL and print it to the
+console.</p>
+<p>Modify the code that invoked <cite>cat</cite> so that, based on the
+command-line args, it decides whether the argument is a file path
+or a URL and calls either <cite>cat</cite> or <cite>webCat</cite>, respectively.</p>
+<pre class="console literal-block">
+$ <span class="cmd">node step2.js one.txt</span>
+This is file one.
+
+$ <span class="cmd">node step2.js http://google.com</span>
+&lt;!doctype html&gt;&lt;html ...
+</pre>
+<p>If there is an error getting the page, it should print that.</p>
+<pre class="console literal-block">
+$ <span class="cmd">node step2.js http://rithmschool.com/no-such-path</span>
+Error fetching <a class="reference external" href="http://rithmschool.com/no-such-path">http://rithmschool.com/no-such-path</a>:
+  Error: Request failed with status code 404
+</pre>
+</div>
+<div class="section" id="step-3">
+<h2>Step 3</h2>
+<p>Copy over your <cite>step2.js</cite> code to <cite>step3.js</cite>.</p>
+<p>Add a feature where, on the command line, you can <em>optionally</em>
+provide an argument to output to a file instead of printing to the console.
+The argument should look like this: <code class="docutils literal notranslate"><span class="pre">--out</span> <span class="pre">output-filename.txt</span> <span class="pre">readfile-or-url</span></code>.</p>
+<p>Current features should still work the same:</p>
+<pre class="console literal-block">
+$ <span class="cmd">node step3.js one.txt</span>
+This is file one.
+
+$ <span class="cmd">node step3.js http://google.com</span>
+&lt;!doctype html&gt;&lt;html ...
+</pre>
+<p>However, if <code class="docutils literal notranslate"><span class="pre">--out</span></code> follows your script name, it should take
+the next argument and use that as the path to write to.</p>
+<p>For example:</p>
+<pre class="console literal-block">
+$ <span class="cmd">node step3.js --out new.txt one.txt</span>
+$ <span class="tan"># no output, but new.txt contains contents of one.txt</span>
+
+$ <span class="cmd">node step3.js --out new.txt  http://google.com</span>
+$ <span class="tan"># no output, but new.txt contains google's HTML</span>
+</pre>
+<p>Make sure you handle errors trying to write to the file:</p>
+<pre class="console literal-block">
+$ <span class="cmd">node step3.js --out /no/dir/new.txt one.txt</span>
+Couldn't write /no/dir/new.txt:
+  Error: ENOENT: no such file or directory, open '/no/dir/new.txt'
+</pre>
+<div class="admonition warning">
+<p>Code Style</p>
+<p>It may be the case at this point that you have functions like
+this:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">cat</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">catWrite</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">filename</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">webCat</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">webCatWrite</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">filename</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>If so, you probably have a lot of duplicated code among these
+functions. Try to structure your code so that:</p>
+<ul class="last simple">
+<li>your functions are small, could be tested, and do one thing</li>
+<li>you minimize duplication of code throughout</li>
+</ul>
+</div>
+</div>
+<div class="section" id="further-study">
+<h2>Further Study</h2>
+<ul class="simple">
+<li>Enhance your script so you can pass any number of arguments on
+the command line and it would output all of those files/URLs in
+sequence.</li>
+</ul>
+</div>
+<div class="section" id="solution">
+<h2>Solution</h2>
+<p><a class="reference external" href="solution/index.html">View our solution</a></p>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="_static/language_data.js"></script> 
+</body>
+</html>
