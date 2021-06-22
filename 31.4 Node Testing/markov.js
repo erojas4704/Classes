@@ -35,6 +35,7 @@ class MarkovMachine {
     });
   }
 
+  //Maps would've saved you a big pain in the ass
 
   /** return random text from chains */
 
