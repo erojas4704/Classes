@@ -1,4 +1,5 @@
 /** Textual markov chain generator */
+const fs = require('fs');
 
 
 class MarkovMachine {
@@ -19,18 +20,18 @@ class MarkovMachine {
   makeChains() {
     // TODO
     this.chains = {};
-    this.words.forEach( (word, i) => {
+    this.words.forEach((word, i) => {
       let next;
-      if(i < this.words.length - 1){
+      if (i < this.words.length - 1) {
         next = this.words[i + 1];
       }
 
-      if(!this.chains[word]){
+      if (!this.chains[word]) {
         this.chains[word] = [];
       }
-    
+
       //if(!this.chains[word].includes(next))
-        this.chains[word].push(next);
+      this.chains[word].push(next);
     });
   }
 
@@ -40,27 +41,46 @@ class MarkovMachine {
   makeText(numWords = 100) {
     // TODO
     let text = "";
-    for(let i = 0; i < numWords; i ++){
-      let index = this.chains.length;
-      text += this.getRandomPair();
+    for (let i = 0; i < numWords; i++) {
+      let next = this.getNext();
+      if (!next) {
+        next = ".";
+      } else if (i != 0) {
+        next = " " + next;
+      }
+      text += next;
     }
     return text;
   }
 
-  getRandomPair(){
+  getNext() {
+    if (!this.currKey) {
+      this.currKey = this.getRandomKey()
+      return this.currKey;
+    }
+
+
+    let key = this.currKey;
+    this.currKey = this.getRandomWord(key);
+    return this.currKey;
+  }
+
+  getRandomWord(key) {
+    let index = Math.floor(this.chains[key].length * Math.random());
+    let word = this.chains[key][index];
+
+    return word;
+  }
+
+  getRandomKey() {
     let keys = Object.keys(this.chains);
     let index = Math.floor(Math.random() * keys.length);
-
-    let word = keys[index];
-    let nextIndex = Math.floor(this.chains[word].length * Math.random() );
-    let nextWord = this.chains[word][nextIndex];
-
-    return ` ${word}${nextWord ? ` ${nextWord}` : "."}`;
+    let key = keys[index];
+    return key;
   }
+
 }
 
-
-
-let m = new MarkovMachine("the cat in the hat is in the hat");
-console.log(m.chains);
-console.log(m.makeText())
+module.exports = {
+  MarkovMachine
+}
