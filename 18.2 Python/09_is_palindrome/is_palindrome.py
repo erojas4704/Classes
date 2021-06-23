@@ -22,4 +22,4 @@ def is_palindrome(phrase):
         True
     """
 
-    return phrase == phrase[::-1]
+    return phrase.replace(" ", '' == phrase.replace(" ", '')[::-1]
