@@ -7,10 +7,6 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use( (req, res, next) => {
-    console.log("BEIS", req.url);
-    next();
-});
 
 app.get('/all', (req, res, next) => {
     try {
