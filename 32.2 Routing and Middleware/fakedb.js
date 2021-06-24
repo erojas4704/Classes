@@ -1,3 +1,5 @@
+const ExpressError = require("./Handlers");
+
 global.items = [];
 
 function addItem(item){
@@ -5,7 +7,11 @@ function addItem(item){
 }
 
 function getItem(name){
-    return global.items.find( i => i.name === name);
+    let item = global.items.find( i => i.name.toLowerCase() === name.toLowerCase());
+    if(!item){
+        throw new ExpressError(`Item ${name} is invalid. Could not be found.`, 404);
+    }
+    return item;
 }
 
 function updateItem(name, data){

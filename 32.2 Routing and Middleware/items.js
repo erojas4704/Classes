@@ -7,7 +7,7 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    let item = request.body;
+    let item = req.body;
     addItem(item);
     return res.status(200).json({
         added: item

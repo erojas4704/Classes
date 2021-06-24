@@ -1,7 +1,10 @@
 const express = require('express');
 const app = express();
+const ExpressError = require('./Handlers');
 const itemRoutes = require('./items.js');
+const morgan = require("morgan");
 
+app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/items", itemRoutes);
@@ -25,4 +28,4 @@ app.use( (err, req, res, next) => {
     });
 });
 
-app.listen(3005, () => { console.log("App active port 3005.") });
+module.exports = app;
