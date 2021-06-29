@@ -1,3 +1,11 @@
 npm install # installs all dependencies in package.json
 
 require('') without a relative file will look in node_modules.a
+
+Pass the dependency as a parameter ot the function. Dependency injection.
+Inversion of control.
+
+
+
+Selenium will help you test clientside interactions.
+Selenium can take screenshots and compare throughout interations.

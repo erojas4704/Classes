@@ -86,6 +86,8 @@ class User {
    *
    * where to_user is
    *   {username, first_name, last_name, phone}
+   * 
+   * Might not need the second join if you use another conditional after WHERE
    */
 
   static async messagesFrom(username) {
