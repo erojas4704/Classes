@@ -1,0 +1,93 @@
+{
+    "$id": "http://example.com/example.json",
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "default": {},
+    "description": "The root schema comprises the entire JSON document.",
+    "examples": [
+        {
+            "amazon_url": "http://www.amazon.com/book",
+            "author": "Billy Tangley",
+            "language": "English",
+            "pages": 400,
+            "publisher": "Fishcer Price",
+            "title": "Donald Trump and the Palisade of the King",
+            "year": 2020
+        }
+    ],
+    "required": [],
+    "title": "The root schema",
+    "type": "object",
+    "properties": {
+        "amazon_url": {
+            "$id": "#/properties/amazon_url",
+            "type": "string",
+            "title": "The amazon_url schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "http://www.amazon.com/book"
+            ]
+        },
+        "author": {
+            "$id": "#/properties/author",
+            "type": "string",
+            "title": "The author schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "Billy Tangley"
+            ]
+        },
+        "language": {
+            "$id": "#/properties/language",
+            "type": "string",
+            "title": "The language schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "English"
+            ]
+        },
+        "pages": {
+            "$id": "#/properties/pages",
+            "type": "integer",
+            "title": "The pages schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0,
+            "examples": [
+                400
+            ]
+        },
+        "publisher": {
+            "$id": "#/properties/publisher",
+            "type": "string",
+            "title": "The publisher schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "Fishcer Price"
+            ]
+        },
+        "title": {
+            "$id": "#/properties/title",
+            "type": "string",
+            "title": "The title schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "Donald Trump and the Palisade of the King"
+            ]
+        },
+        "year": {
+            "$id": "#/properties/year",
+            "type": "integer",
+            "title": "The year schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0,
+            "examples": [
+                2020
+            ]
+        }
+    },
+    "additionalProperties": true
+}
