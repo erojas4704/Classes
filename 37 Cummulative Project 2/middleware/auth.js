@@ -42,8 +42,21 @@ function ensureLoggedIn(req, res, next) {
   }
 }
 
+/** Middleware to use when an user must be an admin.
+ */
+
+function ensureIsAdmin(req, res, next){
+  try{
+    if(!res.locals?.user.isAdmin) throw new UnauthorizedError("You must be an admin to do that.");
+    return next();
+  } catch(err){
+    return next(err);
+  }
+}
+
 
 module.exports = {
   authenticateJWT,
   ensureLoggedIn,
+  ensureIsAdmin
 };
