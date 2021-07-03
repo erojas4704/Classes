@@ -3,6 +3,7 @@
 const db = require("../db.js");
 const { BadRequestError, NotFoundError } = require("../expressError");
 const Company = require("./company.js");
+const { findAll } = require("./job.js");
 const {
   commonBeforeAll,
   commonBeforeEach,
@@ -55,6 +56,7 @@ describe("create", function () {
     }
   });
 });
+
 
 /************************************** findAll */
 

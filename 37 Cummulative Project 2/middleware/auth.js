@@ -47,7 +47,22 @@ function ensureLoggedIn(req, res, next) {
 
 function ensureIsAdmin(req, res, next){
   try{
-    if(!res.locals?.user.isAdmin) throw new UnauthorizedError("You must be an admin to do that.");
+    if(!res.locals.user || !res.locals.user.isAdmin) throw new UnauthorizedError("You must be an admin to do that.");
+    return next();
+  } catch(err){
+    return next(err);
+  }
+}
+
+/** Middleware to use when an user must access their own information or is an admin
+ */
+
+ function ensureHasAccess(req, res, next){
+  try{
+    if(res.locals.user){
+      console.log(res.locals.user.username, req.params.username);
+    }
+    if(!res.locals.user || (!res.locals.user.isAdmin && res.locals.user.username != req.params.username )) throw new UnauthorizedError("You do not have the right privilege to access this.");
     return next();
   } catch(err){
     return next(err);
@@ -55,8 +70,12 @@ function ensureIsAdmin(req, res, next){
 }
 
 
+
+
+
 module.exports = {
   authenticateJWT,
   ensureLoggedIn,
-  ensureIsAdmin
+  ensureIsAdmin,
+  ensureHasAccess
 };
