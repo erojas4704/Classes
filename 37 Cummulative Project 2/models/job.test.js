@@ -1,3 +1,5 @@
+"use strict";
+
 const request = require("supertest");
 
 const db = require("../db");
@@ -13,7 +15,6 @@ const {
 } = require("./_testCommon");
 const { createToken } = require("../helpers/tokens");
 const Job = require("./job");
-const { findAll, findByCriteria, update } = require("./job");
 
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
@@ -53,25 +54,39 @@ describe("Create new job", () => {
 
 describe("Get jobs", () => {
     test("find", async () => {
-        let res = await findAll();
+        let res = await Job.getAll();
         expect(res.length).toEqual(5);
     });
 });
 
 describe("Update values on jobs", () => {
     test("Change the price on a job", async () => {
-        let jobSearch = await Job.findByCriteria({company: "c1"});
-        let job = jobSearch[0];
-        let res = await update(job.id, {
+        let jobsAll = await Job.getAll();
+        let job = jobsAll[0];
+        let res = await Job.update(job.id, {
             salary: 666
         });
+
         expect(res).toEqual({
             title: "Test Chub",
             salary: 666,
             equity: "0",
-            company: "C1",
-            handle: "c1"
+            company_handle: "c1"
         })
+    });
+});
+
+describe("Can delete jobs", () => {
+    test("Delete a job", async () => {
+        let jobsAll = await Job.getAll();
+        let job = jobsAll[0];
+        let res = await Job.remove(job.id);
+        try{
+            let reget = await Job.get(job.id);
+            fail();
+        }catch(err){
+            expect(err.status).toBe(404);
+        }
     });
 });
 

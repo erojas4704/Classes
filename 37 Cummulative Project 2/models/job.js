@@ -33,17 +33,22 @@ class Job {
         const job = result.rows[0];
         return job;
     }
-
-    static async findAll() {
-        const jobs = await db.query(
-            `SELECT id, 
-                title, 
-                salary, 
-                equity, 
-                company_handle
-            FROM jobs
-            ORDER BY company_handle`);
-        return jobs.rows;
+    
+    /**Delete job by id from the database. 
+     * 
+     * No return value.
+     * Throws NotFoundError if the job was not found.
+    */
+    static async remove(id) {
+        const result = await db.query(
+          `DELETE
+               FROM jobs
+               WHERE id = $1
+               RETURNING id`,
+          [id]);
+        const job = result.rows[0];
+    
+        if (!job) throw new NotFoundError(`No job: ${id}`);
     }
 
     /**
@@ -51,7 +56,7 @@ class Job {
  * @param {*} criteria An object containing any of the following optional criteria:
  * title: Job title. 
  * salary: Minimum salary
- * equity; Minimum equity
+ * equity; Any value will do.
  * companyName: Name of the company
  */
     static async findByCriteria(criteria) {
@@ -65,10 +70,9 @@ class Job {
             "company": "name"
         });
 
-        console.log(whereClause);
-
         const jobsRes = await db.query(
-            `SELECT title,
+            `SELECT 
+                title,
                 salary,
                 equity,
                 name as company,
@@ -81,11 +85,21 @@ class Job {
 
         return jobsRes.rows;
     }
+    /**Get all jobs */
+    static async getAll(){
+        const res = await db.query(`
+        SELECT id, title, salary, equity, company_handle
+            FROM jobs
+        `);
+        const jobs = res.rows;
+        if (res.rowCount < 1) throw new NotFoundError(`No jobs`);
+        return jobs;
+    }
 
     /**Get job by ID */
     static async get(id) {
         const res = await db.query(`
-        SELECT title, salary, equity, company_handle
+        SELECT id, title, salary, equity, company_handle
             FROM jobs
             WHERE id = $1
         `, [id]);
@@ -110,7 +124,7 @@ class Job {
         const result = await db.query(querySql, [...values, id]);
         const job = result.rows[0];
 
-        if (!job) throw new NotFoundError(`No company: ${id}`);
+        if (!job) throw new NotFoundError(`No job: ${id}`);
 
         return job;
     }
