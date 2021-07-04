@@ -110,16 +110,37 @@ class Company {
                   name,
                   description,
                   num_employees AS "numEmployees",
-                  logo_url AS "logoUrl"
+                  logo_url AS "logoUrl",
+                  id,
+                  title,
+                  salary,
+                  equity
            FROM companies
+           INNER JOIN jobs ON company_handle=handle
            WHERE handle = $1`,
       [handle]);
 
+    if (companyRes.rowCount < 1) throw new NotFoundError(`No company: ${handle}`);
+
+    const jobs = companyRes.rows.map( o => {
+      return{
+        title: o.title,
+        salary: o.salary,
+        equity: o.equity,
+        id: o.id  
+      }
+    });
     const company = companyRes.rows[0];
+    const companyObj = {
+      name: company.name,
+      description: company.description,
+      numEmployees: company.numEmployees,
+      logoUrl: company.logoUrl,
+      jobs
+    }
 
-    if (!company) throw new NotFoundError(`No company: ${handle}`);
 
-    return company;
+    return companyObj;
   }
 
   /** Update company data with `data`.

@@ -59,9 +59,6 @@ function ensureIsAdmin(req, res, next){
 
  function ensureHasAccess(req, res, next){
   try{
-    if(res.locals.user){
-      console.log(res.locals.user.username, req.params.username);
-    }
     if(!res.locals.user || (!res.locals.user.isAdmin && res.locals.user.username != req.params.username )) throw new UnauthorizedError("You do not have the right privilege to access this.");
     return next();
   } catch(err){

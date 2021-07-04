@@ -13,6 +13,7 @@ const {
   commonAfterAll,
   u1Token,
   adminToken,
+  u2Token,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -330,5 +331,52 @@ describe("DELETE /users/:username", function () {
       .delete(`/users/nope`)
       .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(404);
+  });
+});
+
+describe("POST /users/:username/jobs/:id", () => {
+  test("admins can apply an user to a job", async () => {
+    const allJobs = await request(app).get("/jobs");
+    const job = allJobs.body.jobs[0];
+
+    const resp = await request(app)
+      .post(`/users/u1/jobs/${job.id}`)
+      .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.statusCode).toEqual(200);
+    expect(resp.body).toEqual({
+      applied: job.id
+    });
+  });
+
+  test("users can apply to jobs themselves", async () => {
+    const allJobs = await request(app).get("/jobs");
+    const job = allJobs.body.jobs[0];
+
+    const resp = await request(app)
+      .post(`/users/u1/jobs/${job.id}`)
+      .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toEqual(200);
+    expect(resp.body).toEqual({
+      applied: job.id
+    });
+  });
+
+  test("randos can't apply an user to a job", async () => {
+    const allJobs = await request(app).get("/jobs");
+    const job = allJobs.body.jobs[0];
+
+    const resp = await request(app)
+      .post(`/users/u1/jobs/${job.id}`)
+    expect(resp.statusCode).toEqual(401);
+  });
+
+  test("wrong users can't apply another user to a job", async () => {
+    const allJobs = await request(app).get("/jobs");
+    const job = allJobs.body.jobs[0];
+
+    const resp = await request(app)
+      .post(`/users/u1/jobs/${job.id}`)
+      .set("authorization", `Bearer ${u2Token}`);
+    expect(resp.statusCode).toEqual(401);
   });
 });
